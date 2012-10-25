@@ -4,8 +4,8 @@ A Clojure library for accessing Amazon EC2, based on the official AWS
 Java SDK and borrowing heavily from James Reeves's [clj-aws-s3][]
 library.
 
-Currently the library supports functions to create, list, stop and start
-EC2 instances, and to list AMI images.
+This is a very early development version. Currently the library only
+supports functions to list/describe EC2 reservations and instances.
 
 [clj-aws-s3]: https://github.com/weavejester/clj-aws-s3
 
