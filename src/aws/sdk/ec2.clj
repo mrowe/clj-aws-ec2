@@ -90,7 +90,7 @@
   Reservation
   (to-map [reservation]
     {:instances   (map to-map (.getInstances reservation))
-     :group-names (.getGroupNames reservation)
+     :group-names (flatten (.getGroupNames reservation))
      :groups      (map to-map (.getGroups reservation))})
 
   nil
