@@ -41,6 +41,15 @@
   (^{:no-doc true} to-map [x] "Return a map of the value."))
 
 
+;;
+;; filters
+;;
+
+(defn aws-filter [ name & values ] [ (Filter. name values) ])
+
+(defn instance-filter [filter] (.withFilters (DescribeInstancesRequest.) filter))
+(defn instance-id-filter [id] (instance-filter (aws-filter "instance-id" id)))
+
 
 ;;
 ;; instances
@@ -88,6 +97,8 @@
 
 
 (defn describe-instances
-  "List all the EC2 instances for the supplied credentials."
-  [cred]
-  (map to-map (.getReservations (.describeInstances (ec2-client cred)))))
+  "List all the EC2 instances for the supplied credentials, applying the optional filter if supplied."
+  ([cred]
+     (map to-map (.getReservations (.describeInstances (ec2-client cred)))))
+  ([cred filter]
+     (map to-map (.getReservations (.describeInstances (ec2-client cred) filter)))))
