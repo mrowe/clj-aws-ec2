@@ -42,17 +42,32 @@
 ;; filters
 ;;
 
-(defn- aws-filter [ name & values ] [ (Filter. name values) ])
+(defn aws-filter
+  "Returns a Filter that can be used in calls to AWS to limit the results returned.
 
-(defn instance-filter [filter] (.withFilters (DescribeInstancesRequest.) filter))
-(defn instance-id-filter [id] (instance-filter (aws-filter "instance-id" id)))
+  E.g. (ec2/aws-filter \"tag:Name\" \"my-instance\")"
+  [name & values]
+  [(Filter. name values)])
+
+(defn instance-filter
+  "Returns a filter that can be used with ec2/describe-instances. It
+  should be passed a Filter created by ec2/aws-filter."
+  [filter]
+  (.withFilters (DescribeInstancesRequest.) filter))
+
+(defn instance-id-filter
+  "Returns an instance filter that can be passed to ec2/describe-instances to describe a single instance."
+  [id]
+  (instance-filter (aws-filter "instance-id" id)))
 
 
 ;;
 ;; tags
 ;;
 
-(defn- keywordify [s]
+(defn- keywordify
+  "Generates a lower case keyword from an arbirtary string."
+  [s]
   (keyword (clojure.string/replace (clojure.string/lower-case s) "_" "-")))
 
 
