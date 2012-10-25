@@ -4,7 +4,7 @@
 Each function takes a map of credentials as its first argument. The
 credentials map should contain an :access-key key and a :secret-key key.</pre><div class="public" id="var-aws-filter"><h3>aws-filter</h3><div class="usage"><code>(aws-filter name &amp; values)</code></div><pre class="doc">Returns a Filter that can be used in calls to AWS to limit the results returned.
 
-E.g. (ec2/aws-filter &quot;tag:Name&quot; &quot;my-instance&quot;)</pre></div><div class="public" id="var-describe-images"><h3>describe-images</h3><div class="usage"><code>(describe-images cred)</code><code>(describe-images cred filter)</code></div><pre class="doc">List all the EC2 images (AMIs) owned by credentials, applying the optional filter if supplied.
+E.g. (ec2/aws-filter &quot;tag:Name&quot; &quot;my-instance&quot;)</pre></div><div class="public" id="var-describe-images"><h3>describe-images</h3><div class="usage"><code>(describe-images cred)</code><code>(describe-images cred filter)</code></div><pre class="doc">List all the EC2 images (AMIs), applying the optional filter if supplied.
 </pre></div><div class="public" id="var-describe-instances"><h3>describe-instances</h3><div class="usage"><code>(describe-instances cred)</code><code>(describe-instances cred filter)</code></div><pre class="doc">List all the EC2 instances for the supplied credentials, applying the optional filter if supplied.
 
 Returns a list of Reservations, a data structure which contains the following keys:
