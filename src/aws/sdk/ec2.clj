@@ -160,16 +160,16 @@
   EbsBlockDevice
   (to-map [ebs-block-device]
     {:delete-on-termination (.getDeleteOnTermination ebs-block-device)
-     :iops (.getIops ebs-block-device)
-     :snapshot-id (.getSnapshotId ebs-block-device)
-     :volume-size (.getVolumeSize ebs-block-device)
-     :volume-type (.getVolumeType ebs-block-device)})
+     :iops                  (.getIops ebs-block-device)
+     :snapshot-id           (.getSnapshotId ebs-block-device)
+     :volume-size           (.getVolumeSize ebs-block-device)
+     :volume-type           (.getVolumeType ebs-block-device)})
 
   BlockDeviceMapping
   (to-map [bdm]
-    {:device-name (.getDeviceName bdm)
-     :ebs (to-map (.getEbs bdm))
-     :no-device (.getNoDevice bdm)
+    {:device-name  (.getDeviceName bdm)
+     :ebs          (to-map (.getEbs bdm))
+     :no-device    (.getNoDevice bdm)
      :virtual-name (.getVirtualName bdm)})
 
   ProductCode
@@ -179,27 +179,27 @@
 
   Image
   (to-map [image]
-    {:architecture (.getArchitecture image)
+    {:architecture          (.getArchitecture image)
      :block-device-mappings (map to-map (.getBlockDeviceMappings image))
-     :description (.getDescription image)
-     :hypervisor (.getHypervisor image)
-     :image-id (.getImageId image)
-     :image-location (.getImageLocation image)
-     :image-owner-alias (.getImageOwnerAlias image)
-     :image-type (.getImageType image)
-     :kernel-id (.getKernelId image)
-     :name (.getName image)
-     :owner-id (.getOwnerId image)
-     :platform (.getPlatform image)
-     :product-codes (map to-map (.getProductCodes image))
-     :public (.getPublic image)
-     :ramdisk-id (.getRamdiskId image)
-     :root-device-name (.getRootDeviceName image)
-     :root-device-type (.getRootDeviceType image)
-     :state (.getState image)
-     :state-reason (.getStateReason image)
-     :tags (reduce merge (map to-map  (.getTags image)))
-     :virtualization-type (.getVirtualizationType image)}))
+     :description           (.getDescription image)
+     :hypervisor            (.getHypervisor image)
+     :image-id              (.getImageId image)
+     :image-location        (.getImageLocation image)
+     :image-owner-alias     (.getImageOwnerAlias image)
+     :image-type            (.getImageType image)
+     :kernel-id             (.getKernelId image)
+     :name                  (.getName image)
+     :owner-id              (.getOwnerId image)
+     :platform              (.getPlatform image)
+     :product-codes         (map to-map (.getProductCodes image))
+     :public                (.getPublic image)
+     :ramdisk-id            (.getRamdiskId image)
+     :root-device-name      (.getRootDeviceName image)
+     :root-device-type      (.getRootDeviceType image)
+     :state                 (.getState image)
+     :state-reason          (.getStateReason image)
+     :tags                  (reduce merge (map to-map  (.getTags image)))
+     :virtualization-type   (.getVirtualizationType image)}))
 
 (defn describe-images
   "List all the EC2 images (AMIs), applying the optional filter if supplied."
