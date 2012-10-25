@@ -14,10 +14,7 @@
            com.amazonaws.services.ec2.model.InstanceState
            com.amazonaws.services.ec2.model.Placement
            com.amazonaws.services.ec2.model.Reservation
-           com.amazonaws.services.ec2.model.Tag
-           ))
-
-(use '[clj-time.coerce :only (from-date)])
+           com.amazonaws.services.ec2.model.Tag))
 
 (defn- ec2-client*
   "Create an AmazonEC2Client instance from a map of credentials."
@@ -87,7 +84,7 @@
      :placement         (to-map (.getPlacement instance))
      :tags              (reduce merge (map to-map (.getTags instance)))
      :image             (.getImageId instance)
-     :launch-time       (from-date (.getLaunchTime instance))})
+     :launch-time       (.getLaunchTime instance)})
 
   GroupIdentifier
   (to-map [group-identifier]
