@@ -202,7 +202,7 @@
      :virtualization-type (.getVirtualizationType image)}))
 
 (defn describe-images
-  "List all the EC2 images (AMIs) owned by credentials, applying the optional filter if supplied."
+  "List all the EC2 images (AMIs), applying the optional filter if supplied."
   ([cred]
      (map to-map (.getImages (.describeImages (ec2-client cred)))))
   ([cred filter]
