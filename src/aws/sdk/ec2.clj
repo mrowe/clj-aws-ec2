@@ -45,7 +45,7 @@
 ;; filters
 ;;
 
-(defn aws-filter [ name & values ] [ (Filter. name values) ])
+(defn- aws-filter [ name & values ] [ (Filter. name values) ])
 
 (defn instance-filter [filter] (.withFilters (DescribeInstancesRequest.) filter))
 (defn instance-id-filter [id] (instance-filter (aws-filter "instance-id" id)))
