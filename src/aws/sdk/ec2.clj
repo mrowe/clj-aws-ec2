@@ -52,14 +52,21 @@
 
 
 ;;
+;; tags
+;;
+
+(defn- keywordify [s]
+  (keyword (clojure.string/replace (clojure.string/lower-case s) "_" "-")))
+
+
+;;
 ;; instances
 ;;
 
 (extend-protocol Mappable
   Tag
   (to-map [tag]
-    {:key   (.getKey tag)
-     :value (.getValue tag)})
+    {(keywordify (.getKey tag)) (.getValue tag)})
 
   InstanceState
   (to-map [instance-state]
@@ -78,7 +85,7 @@
      :state             (to-map (.getState instance))
      :type              (.getInstanceType instance)
      :placement         (to-map (.getPlacement instance))
-     :tags              (map to-map (.getTags instance))
+     :tags              (reduce merge (map to-map (.getTags instance)))
      :image             (.getImageId instance)
      :launch-time       (from-date (.getLaunchTime instance))})
 
