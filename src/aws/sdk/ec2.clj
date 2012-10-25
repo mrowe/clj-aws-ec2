@@ -6,13 +6,17 @@
   (:import com.amazonaws.auth.BasicAWSCredentials
            com.amazonaws.services.ec2.AmazonEC2Client
            com.amazonaws.AmazonServiceException
+           com.amazonaws.services.ec2.model.BlockDeviceMapping
            com.amazonaws.services.ec2.model.DescribeImagesRequest 
            com.amazonaws.services.ec2.model.DescribeInstancesRequest
+           com.amazonaws.services.ec2.model.EbsBlockDevice
            com.amazonaws.services.ec2.model.Filter
            com.amazonaws.services.ec2.model.GroupIdentifier
+           com.amazonaws.services.ec2.model.Image
            com.amazonaws.services.ec2.model.Instance
            com.amazonaws.services.ec2.model.InstanceState
            com.amazonaws.services.ec2.model.Placement
+           com.amazonaws.services.ec2.model.ProductCode
            com.amazonaws.services.ec2.model.Reservation
            com.amazonaws.services.ec2.model.Tag))
 
@@ -59,6 +63,24 @@
   "Returns an instance filter that can be passed to ec2/describe-instances to describe a single instance."
   [id]
   (instance-filter (aws-filter "instance-id" id)))
+
+(defn image-filter
+  "Returns a filter that can be used with ec2/describe-images. It
+  should be passed a Filter created by ec2/aws-filter."
+  [filters]
+  (.withFilters (DescribeImagesRequest.) filters))
+
+(defn image-id-filter
+  "Returns an image filter that can be passed to ec2/describe-images to describe a single image."
+  [id]
+  (image-filter (aws-filter "image-id" (str id))))
+
+(defn image-owner-filter
+  "Returns an image filter that can be passed to ec2/describe-images
+  to describe a images owned by a user (e.g. \"self\" for the current
+  user)."
+  [owner]
+  (.withOwners (DescribeImagesRequest.) [owner]))
 
 
 ;;
@@ -127,3 +149,61 @@
      (map to-map (.getReservations (.describeInstances (ec2-client cred)))))
   ([cred filter]
      (map to-map (.getReservations (.describeInstances (ec2-client cred) filter)))))
+
+
+;;
+;; images
+;;
+
+
+(extend-protocol Mappable
+  EbsBlockDevice
+  (to-map [ebs-block-device]
+    {:delete-on-termination (.getDeleteOnTermination ebs-block-device)
+     :iops (.getIops ebs-block-device)
+     :snapshot-id (.getSnapshotId ebs-block-device)
+     :volume-size (.getVolumeSize ebs-block-device)
+     :volume-type (.getVolumeType ebs-block-device)})
+
+  BlockDeviceMapping
+  (to-map [bdm]
+    {:device-name (.getDeviceName bdm)
+     :ebs (to-map (.getEbs bdm))
+     :no-device (.getNoDevice bdm)
+     :virtual-name (.getVirtualName bdm)})
+
+  ProductCode
+  (to-map [product-code]
+    {:product-code-id   (.getProductCodeId product-code)
+     :product-code-type (.getProductCodeType product-code)})
+
+  Image
+  (to-map [image]
+    {:architecture (.getArchitecture image)
+     :block-device-mappings (map to-map (.getBlockDeviceMappings image))
+     :description (.getDescription image)
+     :hypervisor (.getHypervisor image)
+     :image-id (.getImageId image)
+     :image-location (.getImageLocation image)
+     :image-owner-alias (.getImageOwnerAlias image)
+     :image-type (.getImageType image)
+     :kernel-id (.getKernelId image)
+     :name (.getName image)
+     :owner-id (.getOwnerId image)
+     :platform (.getPlatform image)
+     :product-codes (map to-map (.getProductCodes image))
+     :public (.getPublic image)
+     :ramdisk-id (.getRamdiskId image)
+     :root-device-name (.getRootDeviceName image)
+     :root-device-type (.getRootDeviceType image)
+     :state (.getState image)
+     :state-reason (.getStateReason image)
+     :tags (reduce merge (map to-map  (.getTags image)))
+     :virtualization-type (.getVirtualizationType image)}))
+
+(defn describe-images
+  "List all the EC2 images (AMIs) owned by credentials, applying the optional filter if supplied."
+  ([cred]
+     (map to-map (.getImages (.describeImages (ec2-client cred)))))
+  ([cred filter]
+     (map to-map (.getImages (.describeImages (ec2-client cred) filter)))))

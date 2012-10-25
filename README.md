@@ -5,7 +5,8 @@ Java SDK and borrowing heavily from James Reeves's [clj-aws-s3][]
 library.
 
 This is a very early development version. Currently the library only
-supports functions to list/describe EC2 reservations and instances.
+supports functions to list/describe EC2 reservations, instances and
+machine images (AMIs).
 
 [clj-aws-s3]: https://github.com/weavejester/clj-aws-s3
 
@@ -24,6 +25,9 @@ Add the following dependency to your `project.clj` file:
 
 (ec2/describe-instances cred)
 (ec2/describe-instances cred (ec2/instance-id-filter "i-deadcafe"))
+
+(ec2/describe-images cred (image-owner-filter "self"))
+(ec2/describe-images cred (image-id-filter "ami-3c47a355"))
 ```
 
 ## Documentation
