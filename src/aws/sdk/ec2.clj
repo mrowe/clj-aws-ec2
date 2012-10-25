@@ -98,7 +98,12 @@
 
 
 (defn describe-instances
-  "List all the EC2 instances for the supplied credentials, applying the optional filter if supplied."
+  "List all the EC2 instances for the supplied credentials, applying the optional filter if supplied.
+
+  Returns a list of Reservations, a data structure which contains the following keys:
+    :instances   - a list of Instances
+    :groups      - a list of security groups requested for the instances in this reservation
+    :group-names - a list of security group names requested for the instances in this reservation"
   ([cred]
      (map to-map (.getReservations (.describeInstances (ec2-client cred)))))
   ([cred filter]
