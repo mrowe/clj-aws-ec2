@@ -137,7 +137,6 @@
   nil
   (to-map [_] nil))
 
-
 (defn describe-instances
   "List all the EC2 instances for the supplied credentials, applying the optional filter if supplied.
 
@@ -154,7 +153,6 @@
 ;;
 ;; images
 ;;
-
 
 (extend-protocol Mappable
   EbsBlockDevice
