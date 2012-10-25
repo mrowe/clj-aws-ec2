@@ -63,7 +63,8 @@
 
   InstanceState
   (to-map [instance-state]
-    {:name (.getName instance-state)})
+    {:name (.getName instance-state)
+     :code (.getCode instance-state)})
 
   Placement
   (to-map [placement]
