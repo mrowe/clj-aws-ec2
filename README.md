@@ -23,6 +23,7 @@ Add the following dependency to your `project.clj` file:
 (def cred {:access-key "...", :secret-key "..."})
 
 (ec2/describe-instances cred)
+(ec2/describe-instances cred (ec2/instance-id-filter "i-deadcafe"))
 ```
 
 ## Documentation
