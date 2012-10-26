@@ -15,9 +15,12 @@
            com.amazonaws.services.ec2.model.Image
            com.amazonaws.services.ec2.model.Instance
            com.amazonaws.services.ec2.model.InstanceState
+           com.amazonaws.services.ec2.model.InstanceStateChange
            com.amazonaws.services.ec2.model.Placement
            com.amazonaws.services.ec2.model.ProductCode
            com.amazonaws.services.ec2.model.Reservation
+           com.amazonaws.services.ec2.model.StartInstancesRequest
+           com.amazonaws.services.ec2.model.StopInstancesRequest
            com.amazonaws.services.ec2.model.Tag))
 
 (defn- ec2-client*
@@ -107,6 +110,12 @@
     {:name (.getName instance-state)
      :code (.getCode instance-state)})
 
+  InstanceStateChange
+  (to-map [instance-state-change]
+    {:id             (.getInstanceId instance-state-change)
+     :current-state  (to-map (.getCurrentState instance-state-change))
+     :previous-state (to-map (.getPreviousState instance-state-change))})
+
   Placement
   (to-map [placement]
     {:availability-zone (.getAvailabilityZone placement)
@@ -148,6 +157,28 @@
      (map to-map (.getReservations (.describeInstances (ec2-client cred)))))
   ([cred filter]
      (map to-map (.getReservations (.describeInstances (ec2-client cred) filter)))))
+
+(defn start-instances
+  "Start instance(s) that use Amazon EBS volumes as their root device.
+
+  Any number of instance ids may be specified. E.g.:
+
+      (ec2/start-instances cred \"i-beefcafe\" \"i-deadbabe\")
+
+  Starting an already-running instance will have no effect."
+  [cred & instance-ids]
+  (map to-map (.getStartingInstances (.startInstances (ec2-client cred) (StartInstancesRequest. instance-ids)))))
+
+(defn stop-instances
+  "Stop instance(s) that use Amazon EBS volumes as their root device.
+
+  Any number of instance ids may be specified. E.g.:
+
+      (ec2/stop-instances cred \"i-beefcafe\" \"i-deadbabe\")
+
+  Stopping an already-stopped instance will have no effect."
+  [cred & instance-ids]
+  (map to-map (.getStoppingInstances (.stopInstances (ec2-client cred) (StopInstancesRequest. instance-ids)))))
 
 
 ;;
