@@ -8,9 +8,10 @@ library.
 
 This is a very early development version. Currently the library only
 supports functions to list/describe EC2 reservations, instances and
-machine images (AMIs).
+machine images (AMIs). See [TODO][] for future plans.
 
 [clj-aws-s3]: https://github.com/weavejester/clj-aws-s3
+[TODO]: TODO.md
 
 ## Install
 
