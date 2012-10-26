@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mrowe/clj-aws-ec2.png)](https://travis-ci.org/mrowe/clj-aws-ec2)
+
 # clj-aws-ec2
 
 A Clojure library for accessing Amazon EC2, based on the official AWS
