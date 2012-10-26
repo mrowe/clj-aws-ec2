@@ -23,6 +23,8 @@
            com.amazonaws.services.ec2.model.StopInstancesRequest
            com.amazonaws.services.ec2.model.Tag))
 
+(use 'clojure.string)
+
 (defn- ec2-client*
   "Create an AmazonEC2Client instance from a map of credentials."
   [cred]
