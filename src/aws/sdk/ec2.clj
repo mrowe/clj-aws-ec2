@@ -164,11 +164,11 @@
      :volume-type           (.getVolumeType ebs-block-device)})
 
   BlockDeviceMapping
-  (to-map [bdm]
-    {:device-name  (.getDeviceName bdm)
-     :ebs          (to-map (.getEbs bdm))
-     :no-device    (.getNoDevice bdm)
-     :virtual-name (.getVirtualName bdm)})
+  (to-map [block-device-mapping]
+    {:device-name  (.getDeviceName block-device-mapping)
+     :ebs          (to-map (.getEbs block-device-mapping))
+     :no-device    (.getNoDevice block-device-mapping)
+     :virtual-name (.getVirtualName block-device-mapping)})
 
   ProductCode
   (to-map [product-code]
