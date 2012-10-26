@@ -16,7 +16,7 @@ machine images (AMIs).
 
 Add the following dependency to your `project.clj` file:
 
-    [clj-aws-ec2 "0.1.1"]
+    [clj-aws-ec2 "0.1.3"]
 
 ## Example
 
