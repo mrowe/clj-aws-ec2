@@ -4,8 +4,6 @@ This library is a work in progress. Here are some things I am planning to implem
 
  * create-instance
  * terminate-instance
- 
  * delete-image
  * create-image-from-instance
- 
  * manipulate tags on images/instances
