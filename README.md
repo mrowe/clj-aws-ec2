@@ -11,7 +11,7 @@ supports functions to list/describe EC2 reservations, instances and
 machine images (AMIs). See [TODO][] for future plans.
 
 [clj-aws-s3]: https://github.com/weavejester/clj-aws-s3
-[TODO]: https://github.com/mrowe/clj-aws-ec2/blob/master/TODO.md
+[TODO]: https://github.com/mrowe/clj-aws-ec2/wiki/TODO
 
 ## Install
 
