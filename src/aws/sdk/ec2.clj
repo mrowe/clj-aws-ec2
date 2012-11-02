@@ -62,10 +62,10 @@
      :service-name (.getServiceName e)
      :status-code  (.getStatusCode e)}))
 
-(defn decode-exception
+(defn decode-exceptions
   "Returns a Clojure map containing the details of an AmazonServiceException"
-  [e]
-  (to-map e))
+  [& exceptions]
+  (map to-map exceptions))
 
 
 ;;
