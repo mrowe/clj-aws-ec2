@@ -3,7 +3,8 @@
 
   Each function takes a map of credentials as its first argument. The
   credentials map should contain an :access-key key and a :secret-key key."
-  (:import com.amazonaws.auth.BasicAWSCredentials
+  (:import com.amazonaws.AmazonServiceException
+           com.amazonaws.auth.BasicAWSCredentials
            com.amazonaws.services.ec2.AmazonEC2Client
            com.amazonaws.AmazonServiceException
            com.amazonaws.services.ec2.model.BlockDeviceMapping
@@ -45,6 +46,26 @@
 (defprotocol ^{:no-doc true} Mappable
   "Convert a value into a Clojure map."
   (^{:no-doc true} to-map [x] "Return a map of the value."))
+
+(extend-protocol Mappable nil (to-map [_] nil))
+
+
+;;
+;; exceptions
+;;
+
+(extend-protocol Mappable
+  AmazonServiceException
+  (to-map [e]
+    {:error-code   (.getErrorCode e)
+     :error-type   (.name (.getErrorType e))
+     :service-name (.getServiceName e)
+     :status-code  (.getStatusCode e)}))
+
+(defn decode-exception
+  "Returns a Clojure map containing the details of an AmazonServiceException"
+  [e]
+  (to-map e))
 
 
 ;;
@@ -143,10 +164,7 @@
   (to-map [reservation]
     {:instances   (map to-map (.getInstances reservation))
      :group-names (flatten (.getGroupNames reservation))
-     :groups      (map to-map (.getGroups reservation))})
-
-  nil
-  (to-map [_] nil))
+     :groups      (map to-map (.getGroups reservation))}))
 
 (defn describe-instances
   "List all the EC2 instances for the supplied credentials, applying the optional filter if supplied.

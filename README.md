@@ -34,7 +34,26 @@ Add the following dependency to your `project.clj` file:
 
 (ec2/start-instances cred "i-beefcafe")
 (ec2/stop-instances cred "i-beefcafe" "i-deadbabe")
+
 ```
+
+### Exception handling
+
+You can catch exceptions and extract details of the error condition:
+
+```clojure
+(try
+  (ec2/start-instances cred "i-beefcafe")
+  (catch Exception e (ec2/decode-exception e)))
+```
+
+`ec2/decode-exception` provides a map with the following keys:
+
+    :error-code
+    :error-type
+    :service-name
+    :status-code
+
 
 ## Documentation
 
