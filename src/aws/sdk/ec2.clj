@@ -2,7 +2,9 @@
   "Functions to access the Amazon EC2 compute service.
 
   Each function takes a map of credentials as its first argument. The
-  credentials map should contain an :access-key key and a :secret-key key."
+  credentials map should contain an :access-key key and a :secret-key
+  key. It can also contain an optional :endpoint key if you wish to
+  specify an API endpoint (i.e. region) other than us-east."
   (:import com.amazonaws.AmazonServiceException
            com.amazonaws.auth.BasicAWSCredentials
            com.amazonaws.services.ec2.AmazonEC2Client
@@ -29,10 +31,12 @@
 (defn- ec2-client*
   "Create an AmazonEC2Client instance from a map of credentials."
   [cred]
-  (AmazonEC2Client.
-   (BasicAWSCredentials.
-    (:access-key cred)
-    (:secret-key cred))))
+  (let [client (AmazonEC2Client.
+                (BasicAWSCredentials.
+                 (:access-key cred)
+                 (:secret-key cred)))]
+    (if (:endpoint cred) (.setEndpoint client (:endpoint cred)))
+    client))
 
 (def ^{:private true}
   ec2-client

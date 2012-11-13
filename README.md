@@ -17,7 +17,7 @@ machine images (AMIs). See [TODO][] for future plans.
 
 Add the following dependency to your `project.clj` file:
 
-    [clj-aws-ec2 "0.1.4"]
+    [clj-aws-ec2 "0.1.5"]
 
 ## Example
 
@@ -36,6 +36,19 @@ Add the following dependency to your `project.clj` file:
 (ec2/stop-instances cred "i-beefcafe" "i-deadbabe")
 
 ```
+
+### Using regions
+
+To use a region other than `us-east-1` you can specify an API endpoint
+in the credentials map:
+
+```clojure
+(def cred {:access-key "...", :secret-key "..." :endpoint "ap-southeast-2"})
+```
+
+Refer to [Regions and Endpoints][] for a list of current EC2 endpoints.
+
+[Regions and Endpoints]: http://docs.amazonwebservices.com/general/latest/gr/rande.html#ec2_region
 
 ### Exception handling
 
