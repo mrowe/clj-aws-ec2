@@ -43,7 +43,7 @@ To use a region other than `us-east-1` you can specify an API endpoint
 in the credentials map:
 
 ```clojure
-(def cred {:access-key "...", :secret-key "..." :endpoint "ap-southeast-2"})
+(def cred {:access-key "...", :secret-key "...", :endpoint "ap-southeast-2"})
 ```
 
 Refer to [Regions and Endpoints][] for a list of current EC2 endpoints.
