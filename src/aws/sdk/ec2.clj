@@ -58,6 +58,24 @@
 
 
 ;;
+;; convert clojure maps to object graphs
+
+(defn- keyword-to-method
+  "Convert a dashed keyword to a CamelCase method name"
+  [kw]
+  (apply str (map string/capitalize (string/split (name kw) #"-"))))
+
+(defn- set-fields
+  "Use a map of params to call setters on a Java object"
+  [obj params]
+  (doseq [[k v] params]
+    (let [method-name (str "set" (keyword-to-method k))
+          method-args (into-array Object [v])]
+      (clojure.lang.Reflector/invokeInstanceMethod obj method-name method-args)))
+  obj)
+
+
+;;
 ;; exceptions
 ;;
 
@@ -206,21 +224,6 @@
   Stopping an already-stopped instance will have no effect."
   [cred & instance-ids]
   (map to-map (.getStoppingInstances (.stopInstances (ec2-client cred) (StopInstancesRequest. instance-ids)))))
-
-
-(defn- keyword-to-method
-  "Convert a dashed keyword to a CamelCase method name"
-  [kw]
-  (apply str (map string/capitalize (string/split (name kw) #"-"))))
-
-(defn- set-fields
-  "Use a map of params to call setters on a Java object"
-  [obj params]
-  (doseq [[k v] params]
-    (let [method-name (str "set" (keyword-to-method k))
-          method-args (into-array Object [v])]
-      (clojure.lang.Reflector/invokeInstanceMethod obj method-name method-args)))
-  obj)
 
 (defn- ->RunInstancesRequest
   "Creates a RunInstancesRequest and populates it from params."
