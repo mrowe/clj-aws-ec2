@@ -5,6 +5,7 @@
   credentials map should contain an :access-key key and a :secret-key
   key. It can also contain an optional :endpoint key if you wish to
   specify an API endpoint (i.e. region) other than us-east."
+
   (:import com.amazonaws.AmazonServiceException
            com.amazonaws.auth.BasicAWSCredentials
            com.amazonaws.services.ec2.AmazonEC2Client
@@ -25,9 +26,10 @@
            com.amazonaws.services.ec2.model.RunInstancesRequest
            com.amazonaws.services.ec2.model.StartInstancesRequest
            com.amazonaws.services.ec2.model.StopInstancesRequest
-           com.amazonaws.services.ec2.model.Tag))
+           com.amazonaws.services.ec2.model.Tag)
 
-(use 'clojure.string)
+  (:require [clojure.string :as string]))
+
 
 (defn- ec2-client*
   "Create an AmazonEC2Client instance from a map of credentials."
@@ -121,7 +123,7 @@
 (defn- keywordify
   "Generates a lower case keyword from an arbirtary string."
   [s]
-  (keyword (clojure.string/replace (clojure.string/lower-case s) "_" "-")))
+  (keyword (string/replace (string/lower-case s) "_" "-")))
 
 
 ;;
@@ -209,7 +211,7 @@
 (defn- keyword-to-method
   "Convert a dashed keyword to a CamelCase method name"
   [kw]
-  (apply str (map capitalize (clojure.string/split (name kw) #"-"))))
+  (apply str (map string/capitalize (string/split (name kw) #"-"))))
 
 (defn- set-fields
   "Use a map of params to call setters on a Java object"
