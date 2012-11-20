@@ -22,6 +22,7 @@
            com.amazonaws.services.ec2.model.Placement
            com.amazonaws.services.ec2.model.ProductCode
            com.amazonaws.services.ec2.model.Reservation
+           com.amazonaws.services.ec2.model.RunInstancesRequest
            com.amazonaws.services.ec2.model.StartInstancesRequest
            com.amazonaws.services.ec2.model.StopInstancesRequest
            com.amazonaws.services.ec2.model.Tag))
@@ -204,6 +205,53 @@
   [cred & instance-ids]
   (map to-map (.getStoppingInstances (.stopInstances (ec2-client cred) (StopInstancesRequest. instance-ids)))))
 
+
+(defn- keyword-to-method
+  "Convert a dashed keyword to a CamelCase method name"
+  [kw]
+  (apply str (map capitalize (clojure.string/split (name kw) #"-"))))
+
+(defn- set-fields
+  "Use a map of params to call setters on a Java object"
+  [obj params]
+  (doseq [[k v] params]
+    (let [method-name (str "set" (keyword-to-method k))
+          method-args (into-array Object [v])]
+      (clojure.lang.Reflector/invokeInstanceMethod obj method-name method-args)))
+  obj)
+
+(defn- ->RunInstancesRequest
+  "Creates a RunInstancesRequest and populates it from params."
+  [params]
+  (set-fields (RunInstancesRequest.) params))
+
+(defn run-instances
+  "Launch EC2 instances.
+
+  params is a map containing the parameters to send to AWS. E.g.:
+
+  (ec2/run-instances cred { :max-count 1,
+                            :image-id \"ami-9465dbfd\",
+                            :instance-type \"t1.micro\",
+                            :key-name \"my-key\" })
+
+  See
+  http://docs.amazonwebservices.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/model/RunInstancesRequest.html
+  for a complete list of available parameters.
+
+  NOTE: Currently only simple parameters (e.g. strings, integers,
+  etc.) and collections of simple parameters (e.g. security groups)
+  are supported. Specifically, the following parameters are NOT
+  supported yet:
+
+    :block-device-mappings
+    :iam-instance-profile
+    :license
+    :network-interfaces
+    :placement
+  "
+  [cred & params]
+  (to-map (.getReservation (.runInstances (ec2-client cred) (apply ->RunInstancesRequest params)))))
 
 ;;
 ;; images
