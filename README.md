@@ -19,7 +19,7 @@ machine images (AMIs), and to start and stop EBS-backed instances. See
 
 Add the following dependency to your `project.clj` file:
 
-    [clj-aws-ec2 "0.1.5"]
+    [clj-aws-ec2 "0.1.6"]
 
 ## Example
 
@@ -37,7 +37,19 @@ Add the following dependency to your `project.clj` file:
 (ec2/start-instances cred "i-beefcafe")
 (ec2/stop-instances cred "i-beefcafe" "i-deadbabe")
 
+
+(ec2/run-instances cred { :min-count 1
+                          :max-count 1
+                          :image-id "ami-9465dbfd"
+                          :instance-type "t1.micro"
+                          :key-name "my-key" })
+(ec2/terminate-instances cred "i-beefcafe" "i-deadbabe")
 ```
+
+Refer to the
+[API docs](http://mikerowecode.com/clj-aws-ec2/aws.sdk.ec2.html#var-run-instances)
+for a more detailed example of the parameters available to
+`run-instances`.
 
 ### Using regions
 
@@ -73,6 +85,33 @@ You can catch exceptions and extract details of the error condition:
 ## Documentation
 
 * [API docs](http://mrowe.github.com/clj-aws-ec2/)
+
+## History
+
+### 0.1.6
+
+ * Introduced run-instances and terminate-instances
+
+### 0.1.5
+
+ * Added support for regions
+
+### 0.1.4
+
+ * Introduced function to decode AWS exceptions
+
+### 0.1.3
+
+ * Introduced stop/start instances
+
+### 0.1.2
+
+ * Introduce describe-images
+
+### 0.1.1
+
+ * Initial release. Can only describe-instances.
+
 
 ## License
 
