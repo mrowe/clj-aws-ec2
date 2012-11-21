@@ -16,11 +16,15 @@
            com.amazonaws.services.ec2.model.EbsBlockDevice
            com.amazonaws.services.ec2.model.Filter
            com.amazonaws.services.ec2.model.GroupIdentifier
+           com.amazonaws.services.ec2.model.IamInstanceProfileSpecification
            com.amazonaws.services.ec2.model.Image
            com.amazonaws.services.ec2.model.Instance
+           com.amazonaws.services.ec2.model.InstanceLicenseSpecification
+           com.amazonaws.services.ec2.model.InstanceNetworkInterfaceSpecification
            com.amazonaws.services.ec2.model.InstanceState
            com.amazonaws.services.ec2.model.InstanceStateChange
            com.amazonaws.services.ec2.model.Placement
+           com.amazonaws.services.ec2.model.PrivateIpAddressSpecification
            com.amazonaws.services.ec2.model.ProductCode
            com.amazonaws.services.ec2.model.Reservation
            com.amazonaws.services.ec2.model.RunInstancesRequest
@@ -225,38 +229,79 @@
   [cred & instance-ids]
   (map to-map (.getStoppingInstances (.stopInstances (ec2-client cred) (StopInstancesRequest. instance-ids)))))
 
+
+(defn- map->BlockDeviceMapping
+  "Create a BlockDeviceMapping from a map of values."
+  [params]
+  (let [exploded-params (assoc params
+                          :ebs (set-fields (EbsBlockDevice.) (:ebs params)))]
+    (set-fields (BlockDeviceMapping.) exploded-params)))
+
+(defn- map->InstanceNetworkInterfaceSpecification
+  "Create a InstanceNetworkInterfaceSpecification from a map of values."
+  [params]
+  (let [exploded-params (assoc params
+                          :private-ip-addresses (map #(set-fields (PrivateIpAddressSpecification.) %) (:private-ip-addresses params)))]
+    (set-fields (InstanceNetworkInterfaceSpecification.) exploded-params)))
+
 (defn- ->RunInstancesRequest
   "Creates a RunInstancesRequest and populates it from params."
   [params]
-  (set-fields (RunInstancesRequest.) params))
+  ;; Most of the parameters to RunInstancesRequest are simple Java
+  ;; values (String, Integer, Boolean), but a few are composite types,
+  ;; so need nested exploding. NetworkInterfaces in turns contains
+  ;; other composite types.
+  (let [exploded-params (assoc params
+                          :block-device-mappings (map map->BlockDeviceMapping (:block-device-mappings params))
+                          :network-interfaces    (map map->InstanceNetworkInterfaceSpecification (:network-interfaces params))
+                          :iam-instance-profile  (set-fields (IamInstanceProfileSpecification.) (:iam-instance-profile params))
+                          :license               (set-fields (InstanceLicenseSpecification.) (:license params))
+                          :placement             (set-fields (Placement.) (:placement params))
+                          )]
+    (set-fields (RunInstancesRequest.) exploded-params)))
 
 (defn run-instances
   "Launch EC2 instances.
 
   params is a map containing the parameters to send to AWS. E.g.:
 
-  (ec2/run-instances cred { :max-count 1,
-                            :image-id \"ami-9465dbfd\",
-                            :instance-type \"t1.micro\",
+  (ec2/run-instances cred { :min-count 1
+                            :max-count 1
+                            :image-id \"ami-9465dbfd\"
+                            :instance-type \"t1.micro\"
                             :key-name \"my-key\" })
+
+  There are many parameters available to control how instances are
+  configured. E.g.:
+
+  (ec2/run-instances cred { :min-count 1
+                            :max-count 1
+                            :image-id \"ami-9465dbfd\"
+                            :instance-type \"t1.micro\"
+                            :key-name \"my-key\"
+                            :placement { :availability-zone \"ap-southeast-2\" }
+                            :block-device-mappings [ { :device-name  \"/dev/sdh\"
+                                                       :ebs { :delete-on-termination false
+                                                              :volume-size 120
+                                                              :volume-type \"Standard\" } },
+                                                     { :device-name  \"/dev/sdh\"
+                                                       :ebs { :delete-on-termination false
+                                                              :volume-size 120
+                                                              :volume-type \"Standard\" } } ]
+                            :network-interfaces [ { :subnet-id \"abcdef\"
+                                                    :network-interface-id \"eth0\"
+                                                    :private-ip-addresses { :private-ip-address \"10.1.1.103\"
+                                                                            :primary true } } ]
+                            })
 
   See
   http://docs.amazonwebservices.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/model/RunInstancesRequest.html
   for a complete list of available parameters.
-
-  NOTE: Currently only simple parameters (e.g. strings, integers,
-  etc.) and collections of simple parameters (e.g. security groups)
-  are supported. Specifically, the following parameters are NOT
-  supported yet:
-
-    :block-device-mappings
-    :iam-instance-profile
-    :license
-    :network-interfaces
-    :placement
   "
   [cred & params]
   (to-map (.getReservation (.runInstances (ec2-client cred) (apply ->RunInstancesRequest params)))))
+
+
 
 ;;
 ;; images
