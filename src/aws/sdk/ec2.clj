@@ -256,8 +256,7 @@
                           :network-interfaces    (map map->InstanceNetworkInterfaceSpecification (:network-interfaces params))
                           :iam-instance-profile  (set-fields (IamInstanceProfileSpecification.) (:iam-instance-profile params))
                           :license               (set-fields (InstanceLicenseSpecification.) (:license params))
-                          :placement             (set-fields (Placement.) (:placement params))
-                          )]
+                          :placement             (set-fields (Placement.) (:placement params)))]
     (set-fields (RunInstancesRequest.) exploded-params)))
 
 (defn run-instances
