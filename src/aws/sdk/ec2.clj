@@ -30,6 +30,7 @@
            com.amazonaws.services.ec2.model.RunInstancesRequest
            com.amazonaws.services.ec2.model.StartInstancesRequest
            com.amazonaws.services.ec2.model.StopInstancesRequest
+           com.amazonaws.services.ec2.model.TerminateInstancesRequest
            com.amazonaws.services.ec2.model.Tag)
 
   (:require [clojure.string :as string]))
@@ -299,6 +300,15 @@
   "
   [cred & params]
   (to-map (.getReservation (.runInstances (ec2-client cred) (apply ->RunInstancesRequest params)))))
+
+(defn terminate-instances
+  "Terminate instance(s).
+
+  Any number of instance ids may be specified. E.g.:
+
+      (ec2/terminate-instances cred \"i-beefcafe\" \"i-deadbabe\")"
+  [cred & instance-ids]
+  (map to-map (.getTerminatingInstances (.terminateInstances (ec2-client cred) (TerminateInstancesRequest. instance-ids)))))
 
 
 
