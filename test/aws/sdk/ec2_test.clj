@@ -15,9 +15,9 @@
 
   (deftest filter-sets-name-and-one-value
     (testing "AWS filter"
-    (let [f (first filter)]
-      (is (= (.getName f) "foo"))
-      (is (= (.getValues f) '("bar"))))))
+      (let [f (first filter)]
+        (is (= (.getName f) "foo"))
+        (is (= (.getValues f) '("bar"))))))
 
   (deftest filter-sets-two-values
     (testing "AWS filter"
