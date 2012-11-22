@@ -58,14 +58,14 @@
 
 (deftest simple-run-instances-request
   (testing "Can create a simple run-instances request"
-    (let [r (->RunInstancesRequest {:min-count 1, :max-count 2, :image-id "ami-9465dbfd" })]
+    (let [r (#'->RunInstancesRequest {:min-count 1, :max-count 2, :image-id "ami-9465dbfd" })]
       (is (= (.getMinCount r) 1))
       (is (= (.getMaxCount r) 2))
       (is (= (.getImageId r) "ami-9465dbfd")))))
 
 (deftest run-instances-request-with-placement
   (testing "Can create a run-instances request with placement info"
-    (let [r (->RunInstancesRequest {:placement { :availability-zone "az" }})]
+    (let [r (#'->RunInstancesRequest {:placement { :availability-zone "az" }})]
       (is (= (.. r (getPlacement) (getAvailabilityZone)) "az")))))
 
 (deftest run-instances-request-with-block-device-mappings
@@ -74,11 +74,11 @@
                                     :volume-size 120}}]
 
     (testing "Can create a run-instances request with no block device mappings"
-      (let [r (->RunInstancesRequest { })]
+      (let [r (#'->RunInstancesRequest { })]
         (is (= (.. r (getBlockDeviceMappings) (size)) 0))))
     
     (testing "Can create a run-instances request with one block device mapping"
-      (let [r (->RunInstancesRequest { :block-device-mappings [block-device-mapping] })]
+      (let [r (#'->RunInstancesRequest { :block-device-mappings [block-device-mapping] })]
         (is (= (.. r (getBlockDeviceMappings) (size)) 1))
         (let [device-mapping (.. r (getBlockDeviceMappings) (get 0))]
           (is (= (.getDeviceName device-mapping)) "/dev/sdh")
@@ -86,17 +86,17 @@
           (is (= (.. device-mapping (getEbs) (getVolumeSize)) 120)))))
 
     (testing "Can create a run-instances request with two block device mappings"
-      (let [r (->RunInstancesRequest { :block-device-mappings [block-device-mapping, block-device-mapping] })]
+      (let [r (#'->RunInstancesRequest { :block-device-mappings [block-device-mapping, block-device-mapping] })]
         (is (= (.. r (getBlockDeviceMappings) (size)) 2))))))
 
 (deftest run-instances-request-with-network-interfaces
 
     (testing "Can create a run-instances request with no network interfaces"
-      (let [r (->RunInstancesRequest { })]
+      (let [r (#'->RunInstancesRequest { })]
         (is (= (.. r (getNetworkInterfaces) (size)) 0))))
 
     (testing "Can create a run-instances request with a network interface with a single ip"
-      (let [r (->RunInstancesRequest { :network-interfaces [{:subnet-id  "abcdef",
+      (let [r (#'->RunInstancesRequest { :network-interfaces [{:subnet-id  "abcdef",
                                                              :network-interface-id "eth1",
                                                              :private-ip-address "10.1.1.1"}]})]
         (is (= (.. r (getNetworkInterfaces) (size)) 1))
@@ -107,7 +107,7 @@
 
 
     (testing "Can create a run-instances request with a network interface with two ips"
-      (let [r (->RunInstancesRequest { :network-interfaces [{:subnet-id  "abcdef",
+      (let [r (#'->RunInstancesRequest { :network-interfaces [{:subnet-id  "abcdef",
                                                              :network-interface-id "eth1",
                                                              :private-ip-addresses [ {:private-ip-address "10.1.1.1",
                                                                                       :primary true},
