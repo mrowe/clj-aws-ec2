@@ -7,3 +7,4 @@ pom.xml
 .lein-failures
 .lein-deps-sum
 .lein-env
+/pom.xml.asc
