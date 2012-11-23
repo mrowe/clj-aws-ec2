@@ -70,7 +70,7 @@
   [kw]
   (apply str (map string/capitalize (string/split (name kw) #"-"))))
 
-(defn- set-fields
+(defn set-fields
   "Use a map of params to call setters on a Java object"
   [obj params]
   (doseq [[k v] params]
@@ -231,52 +231,38 @@
   (map to-map (.getStoppingInstances (.stopInstances (ec2-client cred) (StopInstancesRequest. instance-ids)))))
 
 (declare mapper)
-(defn- map->ObjectGraph
+
+(defn map->ObjectGraph
   "Transform the map of params to a graph of AWS SDK objects"
   [params]
   (let [keys (keys params)]
     (zipmap keys (map #((mapper %) (params %)) keys))))
 
-(defn- map->BlockDeviceMapping
-  "Create a BlockDeviceMapping from a map of values."
-  [params]
-  (set-fields (BlockDeviceMapping.) (map->ObjectGraph params)))
-
-(defn- map->InstanceNetworkInterfaceSpecification
-  "Create a InstanceNetworkInterfaceSpecification from a map of values."
-  [params]
-  (set-fields (InstanceNetworkInterfaceSpecification.) (map->ObjectGraph params)))
-
-(defn- map->PrivateIpAddressSpecification
-  "Create a PrivateIpAddressSpecification from a map of values."
-  [params]
-  (set-fields (PrivateIpAddressSpecification.) (map->ObjectGraph params)))
-
-(defn- ->RunInstancesRequest
-  "Creates a RunInstancesRequest and populates it from params."
-  [params]
-  (set-fields (RunInstancesRequest.) (map->ObjectGraph params)))
+(defmacro mapper->
+  "Creates a function that invokes set-fields on a new object of type
+   with mapped parameters."
+  [type]
+  `(fn [~'params] (set-fields (new ~type) (map->ObjectGraph ~'params))))
 
 (defn- mapper
-  "Most of the parameters to RunInstancesRequest are simple Java
-   values (String, Integer, Boolean), but a few are composite types so
-   we need to transform the clojure maps the appropriate Java object
-   graph. This function returns a map of such keys to functions that
-   perform the appropriate transformation." [k]
+  "Most of the attributes of RunInstancesRequest are simple Java
+   values (String, Integer, Boolean), but a few are composite types.
+   This function returns a map of the attribute keys that contain
+   composite values to functions that perform the appropriate
+   transformation to concrete Java types from the AWS SDK."
+  [key]
   (let [mappers
         {
-         ;; RunInstanceRequest
-         :block-device-mappings (fn [block-device-mappings] (map map->BlockDeviceMapping block-device-mappings))
-         :network-interfaces    (fn [network-interfaces]    (map map->InstanceNetworkInterfaceSpecification network-interfaces))
-         :iam-instance-profile  (fn [iam-instance-profile]  (set-fields (IamInstanceProfileSpecification.) iam-instance-profile))
-         :license               (fn [license]               (set-fields (InstanceLicenseSpecification.) license))
-         :placement             (fn [placement]             (set-fields (Placement.) placement))
-         ;; BlockDeviceMapping
-         :ebs                   (fn [ebs]                   (set-fields (EbsBlockDevice.) ebs))
-         ;; InstanceNetworkInterfaceSpecification
-         :private-ip-addresses  (fn [private-ip-addresses]  (map map->PrivateIpAddressSpecification private-ip-addresses))
+         :iam-instance-profile  (fn [iam-instance-profile]  ((mapper-> IamInstanceProfileSpecification) iam-instance-profile))
+         :license               (fn [license]               ((mapper-> InstanceLicenseSpecification) license))
+         :placement             (fn [placement]             ((mapper-> Placement) placement))
+         :ebs                   (fn [ebs]                   ((mapper-> EbsBlockDevice) ebs))
+         ;; the following attributes contain vectors of maps
+         :block-device-mappings (fn [block-device-mappings] (map (mapper-> BlockDeviceMapping) block-device-mappings))
+         :network-interfaces    (fn [network-interfaces]    (map (mapper-> InstanceNetworkInterfaceSpecification) network-interfaces))
+         :private-ip-addresses  (fn [private-ip-addresses]  (map (mapper-> PrivateIpAddressSpecification) private-ip-addresses))
     }]
-    (if (k mappers) (k mappers) identity)))
+    (if (contains? mappers key) (mappers key) identity)))
 
 (defn run-instances
   "Launch EC2 instances.
@@ -315,7 +301,7 @@
   for a complete list of available parameters.
   "
   [cred & params]
-  (to-map (.getReservation (.runInstances (ec2-client cred) (apply ->RunInstancesRequest params)))))
+  (to-map (.getReservation (.runInstances (ec2-client cred) ((mapper-> RunInstancesRequest) params)))))
 
 (defn terminate-instances
   "Terminate instance(s).

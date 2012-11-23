@@ -56,49 +56,51 @@
 ;; clojure -> object graph mapping
 ;;
 
-(deftest simple-run-instances-request
-  (testing "Can create a simple run-instances request"
-    (let [r (#'aws.sdk.ec2/->RunInstancesRequest {:min-count 1, :max-count 2, :image-id "ami-9465dbfd" })]
-      (is (= (.getMinCount r) 1))
-      (is (= (.getMaxCount r) 2))
-      (is (= (.getImageId r) "ami-9465dbfd")))))
+(let [mapper (mapper-> com.amazonaws.services.ec2.model.RunInstancesRequest)]
 
-(deftest run-instances-request-with-placement
-  (testing "Can create a run-instances request with placement info"
-    (let [r (#'aws.sdk.ec2/->RunInstancesRequest {:placement { :availability-zone "az" }})]
-      (is (= (.. r (getPlacement) (getAvailabilityZone)) "az")))))
+  (deftest simple-run-instances-request
+    (testing "Can create a simple run-instances request"
+      (let [r (mapper {:min-count 1, :max-count 2, :image-id "ami-9465dbfd" })]
+        (is (= (.getMinCount r) 1))
+        (is (= (.getMaxCount r) 2))
+        (is (= (.getImageId r) "ami-9465dbfd")))))
 
-(deftest run-instances-request-with-block-device-mappings
-  (let [block-device-mapping {:device-name  "/dev/sdh",
-                              :ebs {:delete-on-termination false,
-                                    :volume-size 120}}]
+  (deftest run-instances-request-with-placement
+    (testing "Can create a run-instances request with placement info"
+      (let [r (mapper {:placement { :availability-zone "az" }})]
+        (is (= (.. r (getPlacement) (getAvailabilityZone)) "az")))))
 
-    (testing "Can create a run-instances request with no block device mappings"
-      (let [r (#'aws.sdk.ec2/->RunInstancesRequest { })]
-        (is (= (.. r (getBlockDeviceMappings) (size)) 0))))
-    
-    (testing "Can create a run-instances request with one block device mapping"
-      (let [r (#'aws.sdk.ec2/->RunInstancesRequest { :block-device-mappings [block-device-mapping] })]
-        (is (= (.. r (getBlockDeviceMappings) (size)) 1))
-        (let [device-mapping (.. r (getBlockDeviceMappings) (get 0))]
-          (is (= (.getDeviceName device-mapping)) "/dev/sdh")
-          (is (false? (.. device-mapping (getEbs) (getDeleteOnTermination))))
-          (is (= (.. device-mapping (getEbs) (getVolumeSize)) 120)))))
+  (deftest run-instances-request-with-block-device-mappings
+    (let [block-device-mapping {:device-name  "/dev/sdh",
+                                :ebs {:delete-on-termination false,
+                                      :volume-size 120}}]
 
-    (testing "Can create a run-instances request with two block device mappings"
-      (let [r (#'aws.sdk.ec2/->RunInstancesRequest { :block-device-mappings [block-device-mapping, block-device-mapping] })]
-        (is (= (.. r (getBlockDeviceMappings) (size)) 2))))))
+      (testing "Can create a run-instances request with no block device mappings"
+        (let [r (mapper { })]
+          (is (= (.. r (getBlockDeviceMappings) (size)) 0))))
 
-(deftest run-instances-request-with-network-interfaces
+      (testing "Can create a run-instances request with one block device mapping"
+        (let [r (mapper { :block-device-mappings [block-device-mapping] })]
+          (is (= (.. r (getBlockDeviceMappings) (size)) 1))
+          (let [device-mapping (.. r (getBlockDeviceMappings) (get 0))]
+            (is (= (.getDeviceName device-mapping)) "/dev/sdh")
+            (is (false? (.. device-mapping (getEbs) (getDeleteOnTermination))))
+            (is (= (.. device-mapping (getEbs) (getVolumeSize)) 120)))))
+
+      (testing "Can create a run-instances request with two block device mappings"
+        (let [r (mapper { :block-device-mappings [block-device-mapping, block-device-mapping] })]
+          (is (= (.. r (getBlockDeviceMappings) (size)) 2))))))
+
+  (deftest run-instances-request-with-network-interfaces
 
     (testing "Can create a run-instances request with no network interfaces"
-      (let [r (#'aws.sdk.ec2/->RunInstancesRequest { })]
+      (let [r (mapper { })]
         (is (= (.. r (getNetworkInterfaces) (size)) 0))))
 
     (testing "Can create a run-instances request with a network interface with a single ip"
-      (let [r (#'aws.sdk.ec2/->RunInstancesRequest { :network-interfaces [{:subnet-id  "abcdef",
-                                                                           :device-index 0,
-                                                                           :private-ip-address "10.1.1.1"}]})]
+      (let [r (mapper { :network-interfaces [{:subnet-id  "abcdef",
+                                              :device-index 0,
+                                              :private-ip-address "10.1.1.1"}]})]
         (is (= (.. r (getNetworkInterfaces) (size)) 1))
         (let [network-interfaces (.. r (getNetworkInterfaces) (get 0))]
           (is (= (.getSubnetId network-interfaces) "abcdef"))
@@ -107,12 +109,12 @@
 
 
     (testing "Can create a run-instances request with a network interface with two ips"
-      (let [r (#'aws.sdk.ec2/->RunInstancesRequest { :network-interfaces [{:subnet-id  "abcdef",
-                                                                           :device-index 0,
-                                                                           :private-ip-addresses [ {:private-ip-address "10.1.1.1",
-                                                                                                    :primary true},
-                                                                                                   {:private-ip-address "10.1.2.2",
-                                                                                                    :primary false}]}]})]
+      (let [r (mapper { :network-interfaces [{:subnet-id  "abcdef",
+                                              :device-index 0,
+                                              :private-ip-addresses [ {:private-ip-address "10.1.1.1",
+                                                                       :primary true},
+                                                                      {:private-ip-address "10.1.2.2",
+                                                                       :primary false}]}]})]
         (is (= (.. r (getNetworkInterfaces) (size)) 1))
         (let [network-interfaces (.. r (getNetworkInterfaces) (get 0))]
           (is (= (.getSubnetId network-interfaces) "abcdef"))
@@ -124,4 +126,4 @@
               (is (true? (.isPrimary address))))
             (let [address (.get addresses 1)]
               (is (= (.getPrivateIpAddress address) "10.1.2.2"))
-              (is (false? (.isPrimary address)))))))))
+              (is (false? (.isPrimary address))))))))))
