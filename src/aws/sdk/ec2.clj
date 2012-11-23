@@ -230,35 +230,53 @@
   [cred & instance-ids]
   (map to-map (.getStoppingInstances (.stopInstances (ec2-client cred) (StopInstancesRequest. instance-ids)))))
 
+(declare mapper)
+(defn- map->ObjectGraph
+  "Transform the map of params to a graph of AWS SDK objects"
+  [params]
+  (let [keys (keys params)]
+    (zipmap keys (map #((mapper %) (params %)) keys))))
 
 (defn- map->BlockDeviceMapping
   "Create a BlockDeviceMapping from a map of values."
   [params]
-  (let [exploded-params (assoc params
-                          :ebs (set-fields (EbsBlockDevice.) (:ebs params)))]
-    (set-fields (BlockDeviceMapping.) exploded-params)))
+  (set-fields (BlockDeviceMapping.) (map->ObjectGraph params)))
 
 (defn- map->InstanceNetworkInterfaceSpecification
   "Create a InstanceNetworkInterfaceSpecification from a map of values."
   [params]
-  (let [exploded-params (assoc params
-                          :private-ip-addresses (map #(set-fields (PrivateIpAddressSpecification.) %) (:private-ip-addresses params)))]
-    (set-fields (InstanceNetworkInterfaceSpecification.) exploded-params)))
+  (set-fields (InstanceNetworkInterfaceSpecification.) (map->ObjectGraph params)))
+
+(defn- map->PrivateIpAddressSpecification
+  "Create a PrivateIpAddressSpecification from a map of values."
+  [params]
+  (set-fields (PrivateIpAddressSpecification.) (map->ObjectGraph params)))
 
 (defn- ->RunInstancesRequest
   "Creates a RunInstancesRequest and populates it from params."
   [params]
-  ;; Most of the parameters to RunInstancesRequest are simple Java
-  ;; values (String, Integer, Boolean), but a few are composite types,
-  ;; so need nested exploding. NetworkInterfaces in turns contains
-  ;; other composite types.
-  (let [exploded-params (assoc params
-                          :block-device-mappings (map map->BlockDeviceMapping (:block-device-mappings params))
-                          :network-interfaces    (map map->InstanceNetworkInterfaceSpecification (:network-interfaces params))
-                          :iam-instance-profile  (set-fields (IamInstanceProfileSpecification.) (:iam-instance-profile params))
-                          :license               (set-fields (InstanceLicenseSpecification.) (:license params))
-                          :placement             (set-fields (Placement.) (:placement params)))]
-    (set-fields (RunInstancesRequest.) exploded-params)))
+  (set-fields (RunInstancesRequest.) (map->ObjectGraph params)))
+
+(defn- mapper
+  "Most of the parameters to RunInstancesRequest are simple Java
+   values (String, Integer, Boolean), but a few are composite types so
+   we need to transform the clojure maps the appropriate Java object
+   graph. This function returns a map of such keys to functions that
+   perform the appropriate transformation." [k]
+  (let [mappers
+        {
+         ;; RunInstanceRequest
+         :block-device-mappings (fn [block-device-mappings] (map map->BlockDeviceMapping block-device-mappings))
+         :network-interfaces    (fn [network-interfaces]    (map map->InstanceNetworkInterfaceSpecification network-interfaces))
+         :iam-instance-profile  (fn [iam-instance-profile]  (set-fields (IamInstanceProfileSpecification.) iam-instance-profile))
+         :license               (fn [license]               (set-fields (InstanceLicenseSpecification.) license))
+         :placement             (fn [placement]             (set-fields (Placement.) placement))
+         ;; BlockDeviceMapping
+         :ebs                   (fn [ebs]                   (set-fields (EbsBlockDevice.) ebs))
+         ;; InstanceNetworkInterfaceSpecification
+         :private-ip-addresses  (fn [private-ip-addresses]  (map map->PrivateIpAddressSpecification private-ip-addresses))
+    }]
+    (if (k mappers) (k mappers) identity)))
 
 (defn run-instances
   "Launch EC2 instances.
