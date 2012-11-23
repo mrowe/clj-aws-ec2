@@ -279,19 +279,17 @@
                             :image-id \"ami-9465dbfd\"
                             :instance-type \"t1.micro\"
                             :key-name \"my-key\"
-                            :placement { :availability-zone \"ap-southeast-2\" }
-                            :block-device-mappings [ { :device-name  \"/dev/sdh\"
-                                                       :ebs { :delete-on-termination false
-                                                              :volume-size 120
-                                                              :volume-type \"Standard\" } },
-                                                     { :device-name  \"/dev/sdh\"
-                                                       :ebs { :delete-on-termination false
-                                                              :volume-size 120
-                                                              :volume-type \"Standard\" } } ]
-                            :network-interfaces [ { :subnet-id \"abcdef\"
-                                                    :network-interface-id \"eth0\"
-                                                    :private-ip-addresses { :private-ip-address \"10.1.1.103\"
-                                                                            :primary true } } ]
+                            :placement { :availability-zone \"ap-southeast-2\"}
+                            :block-device-mappings [{:device-name  \"/dev/sdh\"
+                                                     :ebs {:delete-on-termination false
+                                                           :volume-size 120}},
+                                                    {:device-name  \"/dev/sdh\"
+                                                     :ebs {:delete-on-termination false
+                                                           :volume-size 120}}]
+                            :network-interfaces [{:subnet-id \"subject-f00fbaaa\"
+                                                  :device-index 0
+                                                  :private-ip-addresses [{:private-ip-address \"10.1.1.103\"
+                                                                          :primary true}]}]
                             })
 
   See
