@@ -97,26 +97,26 @@
 
     (testing "Can create a run-instances request with a network interface with a single ip"
       (let [r (#'aws.sdk.ec2/->RunInstancesRequest { :network-interfaces [{:subnet-id  "abcdef",
-                                                             :network-interface-id "eth1",
-                                                             :private-ip-address "10.1.1.1"}]})]
+                                                                           :device-index 0,
+                                                                           :private-ip-address "10.1.1.1"}]})]
         (is (= (.. r (getNetworkInterfaces) (size)) 1))
         (let [network-interfaces (.. r (getNetworkInterfaces) (get 0))]
           (is (= (.getSubnetId network-interfaces) "abcdef"))
-          (is (= (.getNetworkInterfaceId network-interfaces) "eth1"))
+          (is (= (.getDeviceIndex network-interfaces) 0))
           (is (= (.getPrivateIpAddress network-interfaces) "10.1.1.1")))))
 
 
     (testing "Can create a run-instances request with a network interface with two ips"
       (let [r (#'aws.sdk.ec2/->RunInstancesRequest { :network-interfaces [{:subnet-id  "abcdef",
-                                                             :network-interface-id "eth1",
-                                                             :private-ip-addresses [ {:private-ip-address "10.1.1.1",
-                                                                                      :primary true},
-                                                                                     {:private-ip-address "10.1.2.2",
-                                                                                      :primary false}]}]})]
+                                                                           :device-index 0,
+                                                                           :private-ip-addresses [ {:private-ip-address "10.1.1.1",
+                                                                                                    :primary true},
+                                                                                                   {:private-ip-address "10.1.2.2",
+                                                                                                    :primary false}]}]})]
         (is (= (.. r (getNetworkInterfaces) (size)) 1))
         (let [network-interfaces (.. r (getNetworkInterfaces) (get 0))]
           (is (= (.getSubnetId network-interfaces) "abcdef"))
-          (is (= (.getNetworkInterfaceId network-interfaces) "eth1"))
+          (is (= (.getDeviceIndex network-interfaces) 0))
           (let [addresses (.getPrivateIpAddresses network-interfaces)]
             (is (= (.size addresses) 2))
             (let [address (.get addresses 0)]
