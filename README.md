@@ -1,5 +1,4 @@
 [![Build Status](https://buildhive.cloudbees.com/job/mrowe/job/clj-aws-ec2/badge/icon)](https://buildhive.cloudbees.com/job/mrowe/job/clj-aws-ec2/)
-[![Build Status](https://travis-ci.org/mrowe/clj-aws-ec2.png)](https://travis-ci.org/mrowe/clj-aws-ec2)
 
 # clj-aws-ec2
 
