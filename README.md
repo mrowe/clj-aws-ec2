@@ -18,7 +18,7 @@ machine images (AMIs), and to start and stop EBS-backed instances. See
 
 Add the following dependency to your `project.clj` file:
 
-    [clj-aws-ec2 "0.1.7"]
+    [clj-aws-ec2 "0.1.8"]
 
 ## Example
 
@@ -43,6 +43,11 @@ Add the following dependency to your `project.clj` file:
                           :instance-type "t1.micro"
                           :key-name "my-key" })
 (ec2/terminate-instances cred "i-beefcafe" "i-deadbabe")
+
+(ec2/create-image cred { :instance-id "i-deadbabe"
+                         :name "web-snapshot"
+                         :description "Snapshot of web server" })
+(ec2/deregister-image cred "ami-07f9756e")
 ```
 
 Refer to the
@@ -86,6 +91,12 @@ You can catch exceptions and extract details of the error condition:
 * [API docs](http://mrowe.github.com/clj-aws-ec2/)
 
 ## History
+
+### 0.1.8
+
+ * Introduced create/deregister images
+ * FIX: run-instances now correctly handles its arguments
+
 
 ### 0.1.7
 
