@@ -1,13 +1,29 @@
 <!DOCTYPE html>
-<html><head><link href="css/default.css" rel="stylesheet" type="text/css"><script src="js/jquery.min.js" type="text/javascript"></script><script src="js/page_effects.js" type="text/javascript"></script><title>aws.sdk.ec2 documentation</title></head><body><div id="header"><h1><a href="index.html">Clj-aws-ec2 0.1.7 API documentation</a></h1></div><div class="sidebar" id="namespaces"><h3><span>Namespaces</span></h3><ul><li class="current"><a href="aws.sdk.ec2.html"><span>aws.sdk.ec2</span></a></li></ul></div><div class="sidebar" id="vars"><h3>Public Vars</h3><ul><li><a href="aws.sdk.ec2.html#var-aws-filter"><span>aws-filter</span></a></li><li><a href="aws.sdk.ec2.html#var-decode-exceptions"><span>decode-exceptions</span></a></li><li><a href="aws.sdk.ec2.html#var-describe-images"><span>describe-images</span></a></li><li><a href="aws.sdk.ec2.html#var-describe-instances"><span>describe-instances</span></a></li><li><a href="aws.sdk.ec2.html#var-image-filter"><span>image-filter</span></a></li><li><a href="aws.sdk.ec2.html#var-image-id-filter"><span>image-id-filter</span></a></li><li><a href="aws.sdk.ec2.html#var-image-owner-filter"><span>image-owner-filter</span></a></li><li><a href="aws.sdk.ec2.html#var-instance-filter"><span>instance-filter</span></a></li><li><a href="aws.sdk.ec2.html#var-instance-id-filter"><span>instance-id-filter</span></a></li><li><a href="aws.sdk.ec2.html#var-map-%3EObjectGraph"><span>map-&gt;ObjectGraph</span></a></li><li><a href="aws.sdk.ec2.html#var-mapper-%3E"><span>mapper-&gt;</span></a></li><li><a href="aws.sdk.ec2.html#var-run-instances"><span>run-instances</span></a></li><li><a href="aws.sdk.ec2.html#var-set-fields"><span>set-fields</span></a></li><li><a href="aws.sdk.ec2.html#var-start-instances"><span>start-instances</span></a></li><li><a href="aws.sdk.ec2.html#var-stop-instances"><span>stop-instances</span></a></li><li><a href="aws.sdk.ec2.html#var-terminate-instances"><span>terminate-instances</span></a></li></ul></div><div class="namespace-docs" id="content"><h2>aws.sdk.ec2 documentation</h2><pre class="doc">Functions to access the Amazon EC2 compute service.
+<html><head><link href="css/default.css" rel="stylesheet" type="text/css"><script src="js/jquery.min.js" type="text/javascript"></script><script src="js/page_effects.js" type="text/javascript"></script><title>aws.sdk.ec2 documentation</title></head><body><div id="header"><h1><a href="index.html">Clj-aws-ec2 0.1.8 API documentation</a></h1></div><div class="sidebar" id="namespaces"><h3><span>Namespaces</span></h3><ul><li class="current"><a href="aws.sdk.ec2.html"><span>aws.sdk.ec2</span></a></li></ul></div><div class="sidebar" id="vars"><h3>Public Vars</h3><ul><li><a href="aws.sdk.ec2.html#var-aws-filter"><span>aws-filter</span></a></li><li><a href="aws.sdk.ec2.html#var-create-image"><span>create-image</span></a></li><li><a href="aws.sdk.ec2.html#var-decode-exceptions"><span>decode-exceptions</span></a></li><li><a href="aws.sdk.ec2.html#var-deregister-image"><span>deregister-image</span></a></li><li><a href="aws.sdk.ec2.html#var-describe-images"><span>describe-images</span></a></li><li><a href="aws.sdk.ec2.html#var-describe-instances"><span>describe-instances</span></a></li><li><a href="aws.sdk.ec2.html#var-image-filter"><span>image-filter</span></a></li><li><a href="aws.sdk.ec2.html#var-image-id-filter"><span>image-id-filter</span></a></li><li><a href="aws.sdk.ec2.html#var-image-owner-filter"><span>image-owner-filter</span></a></li><li><a href="aws.sdk.ec2.html#var-instance-filter"><span>instance-filter</span></a></li><li><a href="aws.sdk.ec2.html#var-instance-id-filter"><span>instance-id-filter</span></a></li><li><a href="aws.sdk.ec2.html#var-map-%3EObjectGraph"><span>map-&gt;ObjectGraph</span></a></li><li><a href="aws.sdk.ec2.html#var-mapper-%3E"><span>mapper-&gt;</span></a></li><li><a href="aws.sdk.ec2.html#var-run-instances"><span>run-instances</span></a></li><li><a href="aws.sdk.ec2.html#var-set-fields"><span>set-fields</span></a></li><li><a href="aws.sdk.ec2.html#var-start-instances"><span>start-instances</span></a></li><li><a href="aws.sdk.ec2.html#var-stop-instances"><span>stop-instances</span></a></li><li><a href="aws.sdk.ec2.html#var-terminate-instances"><span>terminate-instances</span></a></li></ul></div><div class="namespace-docs" id="content"><h2>aws.sdk.ec2 documentation</h2><pre class="doc">Functions to access the Amazon EC2 compute service.
 
 Each function takes a map of credentials as its first argument. The
 credentials map should contain an :access-key key and a :secret-key
 key. It can also contain an optional :endpoint key if you wish to
 specify an API endpoint (i.e. region) other than us-east.</pre><div class="public" id="var-aws-filter"><h3>aws-filter</h3><div class="usage"><code>(aws-filter name &amp; values)</code></div><pre class="doc">Returns a Filter that can be used in calls to AWS to limit the results returned.
 
-E.g. (ec2/aws-filter &quot;tag:Name&quot; &quot;my-instance&quot;)</pre></div><div class="public" id="var-decode-exceptions"><h3>decode-exceptions</h3><div class="usage"><code>(decode-exceptions &amp; exceptions)</code></div><pre class="doc">Returns a Clojure map containing the details of an AmazonServiceException
-</pre></div><div class="public" id="var-describe-images"><h3>describe-images</h3><div class="usage"><code>(describe-images cred)</code><code>(describe-images cred filter)</code></div><pre class="doc">List all the EC2 images (AMIs), applying the optional filter if supplied.
+E.g. (ec2/aws-filter &quot;tag:Name&quot; &quot;my-instance&quot;)</pre></div><div class="public" id="var-create-image"><h3>create-image</h3><div class="usage"><code>(create-image cred params)</code></div><pre class="doc">Creates an Amazon EBS-backed AMI from a running or stopped instance and returns the
+ new image's id.
+
+params is a map containing the instance id and name, and any other optional parameters.
+
+E.g.:
+
+(ec2/create-image cred { :instance-id &quot;i-deadbabe&quot;
+                         :name &quot;web-snapshot&quot;
+                         :description &quot;Snapshot of web server&quot;
+                         :block-device-mappings [{:device-name  &quot;/dev/sdh&quot;
+                                                  :ebs {:delete-on-termination false
+                                                        :volume-size 120}}]})</pre></div><div class="public" id="var-decode-exceptions"><h3>decode-exceptions</h3><div class="usage"><code>(decode-exceptions &amp; exceptions)</code></div><pre class="doc">Returns a Clojure map containing the details of an AmazonServiceException
+</pre></div><div class="public" id="var-deregister-image"><h3>deregister-image</h3><div class="usage"><code>(deregister-image cred image-id)</code></div><pre class="doc">Deregisters an AMI. Once deregistered, instances of the AMI can no longer be launched.
+
+E.g.:
+
+(ec2/deregister-image cred &quot;ami-9465dbfd&quot;)</pre></div><div class="public" id="var-describe-images"><h3>describe-images</h3><div class="usage"><code>(describe-images cred)</code><code>(describe-images cred filter)</code></div><pre class="doc">List all the EC2 images (AMIs), applying the optional filter if supplied.
 </pre></div><div class="public" id="var-describe-instances"><h3>describe-instances</h3><div class="usage"><code>(describe-instances cred)</code><code>(describe-instances cred filter)</code></div><pre class="doc">List all the EC2 instances for the supplied credentials, applying the optional filter if supplied.
 
 Returns a list of Reservations, a data structure which contains the following keys:
@@ -21,7 +37,7 @@ user).</pre></div><div class="public" id="var-instance-filter"><h3>instance-filt
 should be passed a Filter created by ec2/aws-filter.</pre></div><div class="public" id="var-instance-id-filter"><h3>instance-id-filter</h3><div class="usage"><code>(instance-id-filter id)</code></div><pre class="doc">Returns an instance filter that can be passed to ec2/describe-instances to describe a single instance.
 </pre></div><div class="public" id="var-map-%3EObjectGraph"><h3>map-&gt;ObjectGraph</h3><div class="usage"><code>(map-&gt;ObjectGraph params)</code></div><pre class="doc">Transform the map of params to a graph of AWS SDK objects
 </pre></div><div class="public" id="var-mapper-%3E"><h3>mapper-&gt;</h3><div class="usage"><code>(mapper-&gt; type)</code></div><pre class="doc">Creates a function that invokes set-fields on a new object of type
-with mapped parameters.</pre></div><div class="public" id="var-run-instances"><h3>run-instances</h3><div class="usage"><code>(run-instances cred &amp; params)</code></div><pre class="doc">Launch EC2 instances.
+with mapped parameters.</pre></div><div class="public" id="var-run-instances"><h3>run-instances</h3><div class="usage"><code>(run-instances cred params)</code></div><pre class="doc">Launch EC2 instances.
 
 params is a map containing the parameters to send to AWS. E.g.:
 
@@ -41,9 +57,6 @@ configured. E.g.:
                           :key-name &quot;my-key&quot;
                           :placement { :availability-zone &quot;ap-southeast-2&quot;}
                           :block-device-mappings [{:device-name  &quot;/dev/sdh&quot;
-                                                   :ebs {:delete-on-termination false
-                                                         :volume-size 120}},
-                                                  {:device-name  &quot;/dev/sdh&quot;
                                                    :ebs {:delete-on-termination false
                                                          :volume-size 120}}]
                           :network-interfaces [{:subnet-id &quot;subject-f00fbaaa&quot;
