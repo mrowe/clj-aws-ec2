@@ -297,7 +297,7 @@
   http://docs.amazonwebservices.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/model/RunInstancesRequest.html
   for a complete list of available parameters.
   "
-  [cred & params]
+  [cred params]
   (to-map (.getReservation (.runInstances (ec2-client cred) ((mapper-> RunInstancesRequest) params)))))
 
 (defn terminate-instances
