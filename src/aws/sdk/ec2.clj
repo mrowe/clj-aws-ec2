@@ -286,9 +286,6 @@
                             :placement { :availability-zone \"ap-southeast-2\"}
                             :block-device-mappings [{:device-name  \"/dev/sdh\"
                                                      :ebs {:delete-on-termination false
-                                                           :volume-size 120}},
-                                                    {:device-name  \"/dev/sdh\"
-                                                     :ebs {:delete-on-termination false
                                                            :volume-size 120}}]
                             :network-interfaces [{:subnet-id \"subject-f00fbaaa\"
                                                   :device-index 0
