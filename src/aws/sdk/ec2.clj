@@ -11,6 +11,8 @@
            com.amazonaws.services.ec2.AmazonEC2Client
            com.amazonaws.AmazonServiceException
            com.amazonaws.services.ec2.model.BlockDeviceMapping
+           com.amazonaws.services.ec2.model.CreateImageRequest
+           com.amazonaws.services.ec2.model.DeregisterImageRequest
            com.amazonaws.services.ec2.model.DescribeImagesRequest 
            com.amazonaws.services.ec2.model.DescribeInstancesRequest
            com.amazonaws.services.ec2.model.EbsBlockDevice
@@ -366,3 +368,29 @@
      (map to-map (.getImages (.describeImages (ec2-client cred)))))
   ([cred filter]
      (map to-map (.getImages (.describeImages (ec2-client cred) filter)))))
+
+(defn create-image
+  "Creates an Amazon EBS-backed AMI from a running or stopped instance and returns the
+   new image's id.
+
+  params is a map containing the instance id and name, and any other optional parameters.
+
+  E.g.:
+
+  (ec2/create-image cred { :instance-id \"i-deadbabe\"
+                           :name \"web-snapshot\"
+                           :description \"Snapshot of web server\"
+                           :block-device-mappings [{:device-name  \"/dev/sdh\"
+                                                    :ebs {:delete-on-termination false
+                                                          :volume-size 120}}]})"
+  [cred params]
+  { :image-id (.getImageId (.createImage (ec2-client cred) ((mapper-> CreateImageRequest) params)))})
+
+(defn deregister-image
+  "Deregisters an AMI. Once deregistered, instances of the AMI can no longer be launched.
+
+  E.g.:
+
+  (ec2/deregister-image cred \"ami-9465dbfd\")"
+  [cred image-id]
+  (.deregisterImage (ec2-client cred) (DeregisterImageRequest. image-id)))
