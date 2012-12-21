@@ -77,8 +77,10 @@
   [obj params]
   (doseq [[k v] params]
     (let [method-name (str "set" (keyword-to-method k))
-          method-args (into-array Object [v])]
-      (clojure.lang.Reflector/invokeInstanceMethod obj method-name method-args)))
+          method (first (clojure.lang.Reflector/getMethods (.getClass obj) 1 method-name false))
+          arg-type (first (.getParameterTypes method))
+          arg (if (= arg-type java.lang.Integer) (Integer. v) v)]
+      (clojure.lang.Reflector/invokeInstanceMember method-name obj arg)))
   obj)
 
 
