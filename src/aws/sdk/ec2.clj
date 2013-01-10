@@ -12,6 +12,7 @@
            com.amazonaws.AmazonServiceException
            com.amazonaws.services.ec2.model.BlockDeviceMapping
            com.amazonaws.services.ec2.model.CreateImageRequest
+           com.amazonaws.services.ec2.model.CreateTagsRequest
            com.amazonaws.services.ec2.model.DeregisterImageRequest
            com.amazonaws.services.ec2.model.DescribeImagesRequest 
            com.amazonaws.services.ec2.model.DescribeInstancesRequest
@@ -83,6 +84,19 @@
       (clojure.lang.Reflector/invokeInstanceMember method-name obj arg)))
   obj)
 
+(declare mapper)
+
+(defn map->ObjectGraph
+  "Transform the map of params to a graph of AWS SDK objects"
+  [params]
+  (let [keys (keys params)]
+    (zipmap keys (map #((mapper %) (params %)) keys))))
+
+(defmacro mapper->
+  "Creates a function that invokes set-fields on a new object of type
+   with mapped parameters."
+  [type]
+  `(fn [~'params] (set-fields (new ~type) (map->ObjectGraph ~'params))))
 
 ;;
 ;; exceptions
@@ -152,6 +166,26 @@
   [s]
   (keyword (string/replace (string/lower-case s) "_" "-")))
 
+(defn- tagify
+  "Generates a conventional AWS tag name from a keyword."
+  [k]
+  (string/replace (name k) "-" "_"))
+
+(defn- create-tag
+  ""
+  [k v]
+  ((mapper-> Tag) {:key (tagify k), :value v}))
+
+(defn create-tags
+  "Adds or overwrites tags for the specified resources.
+
+  Takes a list of resource ids (e.g. instance ids, AMI ids, etc.) and
+  a map of tags to add or overwrite for the specified resources. E.g.:
+
+      (ec2/create-tags cred [\"id-deadcafe\", \"ami-9465dbfd\"] {:name \"web server\" :owner \"ops\"})"
+  [cred ids tags]
+  (let [aws-tags (for [[k v] tags] (create-tag k v))]
+    (.createTags (ec2-client cred) (CreateTagsRequest. ids aws-tags))))
 
 ;;
 ;; instances
@@ -233,20 +267,6 @@
   Stopping an already-stopped instance will have no effect."
   [cred & instance-ids]
   (map to-map (.getStoppingInstances (.stopInstances (ec2-client cred) (StopInstancesRequest. instance-ids)))))
-
-(declare mapper)
-
-(defn map->ObjectGraph
-  "Transform the map of params to a graph of AWS SDK objects"
-  [params]
-  (let [keys (keys params)]
-    (zipmap keys (map #((mapper %) (params %)) keys))))
-
-(defmacro mapper->
-  "Creates a function that invokes set-fields on a new object of type
-   with mapped parameters."
-  [type]
-  `(fn [~'params] (set-fields (new ~type) (map->ObjectGraph ~'params))))
 
 (defn- mapper
   "Most of the attributes of RunInstancesRequest are simple Java
