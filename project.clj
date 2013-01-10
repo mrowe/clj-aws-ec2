@@ -1,4 +1,4 @@
-(defproject clj-aws-ec2 "0.1.9"
+(defproject clj-aws-ec2 "0.1.10"
   :description "Clojure Amazon EC2 library."
   :url "https://github.com/mrowe/clj-aws-ec2"
   :license {:name "Eclipse Public License"
