@@ -18,7 +18,7 @@ machine images (AMIs), and to start and stop EBS-backed instances. See
 
 Add the following dependency to your `project.clj` file:
 
-    [clj-aws-ec2 "0.1.8"]
+    [clj-aws-ec2 "0.1.9"]
 
 ## Example
 
@@ -91,6 +91,11 @@ You can catch exceptions and extract details of the error condition:
 * [API docs](http://mrowe.github.com/clj-aws-ec2/)
 
 ## History
+
+### 0.1.9
+
+ * FIX: correctly handle numeric attributes where AWS is expecting an Integer (not Long)
+
 
 ### 0.1.8
 
