@@ -30,8 +30,8 @@ Add the following dependency to your `project.clj` file:
 (ec2/describe-instances cred)
 (ec2/describe-instances cred (ec2/instance-id-filter "i-deadcafe"))
 
-(ec2/describe-images cred (image-owner-filter "self"))
-(ec2/describe-images cred (image-id-filter "ami-3c47a355"))
+(ec2/describe-images cred (ec2/image-owner-filter "self"))
+(ec2/describe-images cred (ec2/image-id-filter "ami-3c47a355"))
 
 (ec2/start-instances cred "i-beefcafe")
 (ec2/stop-instances cred "i-beefcafe" "i-deadbabe")
