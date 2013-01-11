@@ -13,9 +13,11 @@
            com.amazonaws.services.ec2.model.BlockDeviceMapping
            com.amazonaws.services.ec2.model.CreateImageRequest
            com.amazonaws.services.ec2.model.CreateTagsRequest
+           com.amazonaws.services.ec2.model.DeleteTagsRequest
            com.amazonaws.services.ec2.model.DeregisterImageRequest
            com.amazonaws.services.ec2.model.DescribeImagesRequest 
            com.amazonaws.services.ec2.model.DescribeInstancesRequest
+           com.amazonaws.services.ec2.model.DescribeTagsRequest
            com.amazonaws.services.ec2.model.EbsBlockDevice
            com.amazonaws.services.ec2.model.Filter
            com.amazonaws.services.ec2.model.GroupIdentifier
@@ -34,7 +36,8 @@
            com.amazonaws.services.ec2.model.StartInstancesRequest
            com.amazonaws.services.ec2.model.StopInstancesRequest
            com.amazonaws.services.ec2.model.TerminateInstancesRequest
-           com.amazonaws.services.ec2.model.Tag)
+           com.amazonaws.services.ec2.model.Tag
+           com.amazonaws.services.ec2.model.TagDescription)
 
   (:require [clojure.string :as string]))
 
@@ -172,9 +175,36 @@
   (string/replace (name k) "-" "_"))
 
 (defn- create-tag
-  ""
+  "Create an AWS Tag object from a key/value pair."
   [k v]
   ((mapper-> Tag) {:key (tagify k), :value v}))
+
+(extend-protocol Mappable
+  TagDescription
+  (to-map [tag-description]
+    {:key (.getKey tag-description)
+     :value (.getValue tag-description)
+     :resource-type (.getResourceType tag-description)
+     :resource-id (.getResourceId tag-description)}))
+
+(defn describe-tags
+  "Describes one or more of the tags for your EC2 resources.
+
+  You can specify filters to limit the response when describing tags.
+  For example, you can use a filter to get only the tags for a
+  specific resource. E.g.:
+
+      (describe-tags cred (aws-filter \"resource-id\" \"id-babecafe\"))
+
+  Or you can get all tags for a particular resource type:
+
+      (describe-tags cred (aws-filter \"resource-type\" \"image\"))
+
+  See
+  http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeTags.html#query-DescribeTags-filters
+  for more information about supported filters."
+  [cred filter]
+  (map to-map (.getTags (.describeTags (ec2-client cred) (DescribeTagsRequest. filter)))))
 
 (defn create-tags
   "Adds or overwrites tags for the specified resources.
@@ -186,6 +216,22 @@
   [cred ids tags]
   (let [aws-tags (for [[k v] tags] (create-tag k v))]
     (.createTags (ec2-client cred) (CreateTagsRequest. ids aws-tags))))
+
+(defn delete-tags
+  "Deletes tags from the specified Amazon EC2 resources. E.g.:
+
+  Takes a list of resource ids (e.g. instance ids, AMI ids, etc.) and
+  a map of tags to delete from the specified resources. E.g.:
+
+      (ec2/delete-tags cred [\"id-deadcafe\", \"ami-9465dbfd\"] {:name \"web server\" :owner \"ops\"})
+
+  To delete a tag without regard to its current value, use `nil`:
+
+      (ec2/delete-tags cred [\"id-deadcafe\"] {:owner nil})"
+  [cred ids tags]
+  (let [aws-tags (for [[k v] tags] (create-tag k v))]
+    (.deleteTags (ec2-client cred) (.withTags (DeleteTagsRequest. ids) aws-tags))))
+
 
 ;;
 ;; instances
