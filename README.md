@@ -48,6 +48,11 @@ Add the following dependency to your `project.clj` file:
                          :name "web-snapshot"
                          :description "Snapshot of web server" })
 (ec2/deregister-image cred "ami-07f9756e")
+
+(ec2/describe-tags cred (ec2/aws-filter "resource-id" "id-babecafe"))
+(ec2/describe-tags cred (ec2/aws-filter "resource-type" "image"))
+(ec2/create-tags cred ["id-deadcafe", "ami-9465dbfd"] {:name "web server" :owner "ops"})
+(ec2/delete-tags cred ["id-deadcafe"] {:owner nil})
 ```
 
 Refer to the
