@@ -286,7 +286,12 @@
   Returns a list of Reservations, a data structure which contains the following keys:
     :instances   - a list of Instances
     :groups      - a list of security groups requested for the instances in this reservation
-    :group-names - a list of security group names requested for the instances in this reservation"
+    :group-names - a list of security group names requested for the instances in this reservation
+
+  You can specify filters to limit the number of instances returned or
+  to find a specific instance. E.g.:
+
+      (ec2/describe-instances cred (ec2/instance-id-filter \"i-deadcafe\"))"
   ([cred]
      (map to-map (.getReservations (.describeInstances (ec2-client cred)))))
   ([cred filter]
@@ -431,7 +436,13 @@
      :virtualization-type   (.getVirtualizationType image)}))
 
 (defn describe-images
-  "List all the EC2 images (AMIs), applying the optional filter if supplied."
+  "List all the EC2 images (AMIs), applying the optional filter if supplied.
+
+  You can specify filters to limit the number of AMIs returned to
+  those with a specific owner, or to find a specific AMI by id. E.g.:
+
+      (ec2/describe-images cred (ec2/image-id-filter \"ami-9465dbfd\"))
+      (ec2/describe-images cred (ec2/image-owner-filter \"self\"))"
   ([cred]
      (map to-map (.getImages (.describeImages (ec2-client cred)))))
   ([cred filter]
