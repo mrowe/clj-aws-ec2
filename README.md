@@ -97,6 +97,11 @@ You can catch exceptions and extract details of the error condition:
 
 ## History
 
+### 0.1.11
+
+ * Make the describe-tags API more consistent with other describe-* operations
+
+
 ### 0.1.10
 
  * Introduced describe, create and delete tags
