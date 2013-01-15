@@ -144,8 +144,8 @@
 (defn image-filter
   "Returns a filter that can be used with ec2/describe-images. It
   should be passed a Filter created by ec2/aws-filter."
-  [filters]
-  (.withFilters (DescribeImagesRequest.) filters))
+  [filter]
+  (.withFilters (DescribeImagesRequest.) filter))
 
 (defn image-id-filter
   "Returns an image filter that can be passed to ec2/describe-images to describe a single image."
