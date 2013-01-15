@@ -160,19 +160,20 @@
   (.withOwners (DescribeImagesRequest.) [owner]))
 
 (defn tag-filter
-  ""
-  [key value]
-     (DescribeTagsRequest. (aws-filter key value)))
+  "Returns a filter that can be passed to ec2/describe-tags to limit the results returned. It
+  should be passed a Filter created by ec2/aws-filter."
+  [filter]
+     (DescribeTagsRequest. filter))
 
 (defn tag-filter-by-resource-id
   "Returns a filter that can be passed to ec2/describe-tags to get all tags for a resource."
   [resource-id]
-  (tag-filter "resource-id" resource-id))
+  (tag-filter (aws-filter "resource-id" resource-id)))
 
 (defn tag-filter-by-resource-type
   "Returns a filter that can be passed to ec2/describe-tags to get all tags for a type of resource."
   [resource-type]
-  (tag-filter "resource-type" resource-type))
+  (tag-filter (aws-filter "resource-type" resource-type)))
 
 
 ;;
@@ -211,9 +212,13 @@
 
       (ec2/describe-tags cred (ec2/tag-filter-by-resource-id \"id-babecafe\"))
 
-  Or you can get all tags for a particular resource type:
+  You can also get all tags for a particular resource type:
 
       (ec2/describe-tags cred (ec2/tag-filter-by-resource-type \"image\"))
+
+  Or specify your own filter:
+
+      (ec2/describe-tags cred (ec2/tag-filter (ec2/aws-filter \"tag:Name\" \"*webserver*\")))
 
   See
   http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeTags.html#query-DescribeTags-filters
