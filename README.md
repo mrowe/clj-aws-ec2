@@ -149,6 +149,6 @@ You can catch exceptions and extract details of the error condition:
 
 ## License
 
-Copyright (C) 2012 Michael Rowe
+Copyright (C) 2012-2013 Michael Rowe
 
 Distributed under the Eclipse Public License, the same as Clojure.
