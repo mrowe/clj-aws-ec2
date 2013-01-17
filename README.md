@@ -100,6 +100,7 @@ You can catch exceptions and extract details of the error condition:
 ### 0.1.11
 
  * Make the describe-tags API more consistent with other describe-* operations
+ * Simplify decode-exception
 
 
 ### 0.1.10
