@@ -111,7 +111,8 @@
     {:error-code   (.getErrorCode e)
      :error-type   (.name (.getErrorType e))
      :service-name (.getServiceName e)
-     :status-code  (.getStatusCode e)}))
+     :status-code  (.getStatusCode e)
+     :message      (.getMessage e)}))
 
 (defn decode-exception
   "Returns a Clojure containing the details of an AmazonServiceException"
