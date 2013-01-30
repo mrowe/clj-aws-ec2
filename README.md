@@ -18,7 +18,7 @@ machine images (AMIs), and to start and stop EBS-backed instances. See
 
 Add the following dependency to your `project.clj` file:
 
-    [clj-aws-ec2 "0.1.10"]
+    [clj-aws-ec2 "0.1.11"]
 
 ## Example
 
@@ -101,6 +101,7 @@ You can catch exceptions and extract details of the error condition:
 
  * Make the describe-tags API more consistent with other describe-* operations
  * Simplify decode-exception
+ * FIX: Don't map hyphens<->underscores in tag names. Always return tag names as strings (not keywords).
 
 
 ### 0.1.10
