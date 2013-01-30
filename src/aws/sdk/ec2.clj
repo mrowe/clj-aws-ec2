@@ -191,7 +191,7 @@
   [k]
   (string/replace (name k) "-" "_"))
 
-(defn- create-tag
+(defn create-tag
   "Create an AWS Tag object from a key/value pair."
   [k v]
   ((mapper-> Tag) {:key (tagify k), :value v}))

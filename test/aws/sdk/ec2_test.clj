@@ -2,7 +2,6 @@
   (:use clojure.test
         aws.sdk.ec2))
 
-
 ;;
 ;; filters
 ;;
@@ -127,3 +126,28 @@
             (let [address (.get addresses 1)]
               (is (= (.getPrivateIpAddress address) "10.1.2.2"))
               (is (false? (.isPrimary address))))))))))
+
+;;
+;; tag names
+;;
+
+(deftest tag-names-are-preserved
+
+  (defn clj-key [tag] (key (first (to-map tag))))
+  (defn aws-key [tag] (.getKey tag))
+
+  (testing "Tag names are preserved"
+    (testing "with simple names"
+      (let [tag (create-tag :foo "bar")]
+        (is (= (aws-key tag) "foo"))
+        (is (= (clj-key tag) :foo))))
+
+    (testing "with hyphens"
+      (let [tag (create-tag :foo-bar "baz")]
+        (is (= (aws-key tag) "foo-bar"))
+        (is (= (clj-key tag) :foo-bar))))
+
+    (testing "with underscores"
+      (let [tag (create-tag "foo_bar" "baz")]
+        (is (= (aws-key tag) "foo_bar"))
+        (is (= (clj-key tag) "foo_bar"))))))
