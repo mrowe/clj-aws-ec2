@@ -131,23 +131,32 @@
 ;; tag names
 ;;
 
-(deftest tag-names-are-preserved
+(deftest tag-names-can-be-specified-as-strings-or-keywords
 
-  (defn clj-key [tag] (key (first (to-map tag))))
-  (defn aws-key [tag] (.getKey tag))
+  (defn clj-tag-name [tag] (key (first (to-map tag))))
 
-  (testing "Tag names are preserved"
+  (testing "Tag names can be specified as strings"
     (testing "with simple names"
-      (let [tag (create-tag :foo "bar")]
-        (is (= (aws-key tag) "foo"))
-        (is (= (clj-key tag) :foo))))
+      (let [tag (create-tag "foo" "bar")]
+        (is (= (clj-tag-name tag) "foo"))))
 
     (testing "with hyphens"
-      (let [tag (create-tag :foo-bar "baz")]
-        (is (= (aws-key tag) "foo-bar"))
-        (is (= (clj-key tag) :foo-bar))))
+      (let [tag (create-tag "foo-bar" "baz")]
+        (is (= (clj-tag-name tag) "foo-bar"))))
 
     (testing "with underscores"
       (let [tag (create-tag "foo_bar" "baz")]
-        (is (= (aws-key tag) "foo_bar"))
-        (is (= (clj-key tag) "foo_bar"))))))
+        (is (= (clj-tag-name tag) "foo_bar")))))
+
+  (testing "Tag names can be specified as keywords"
+    (testing "with simple names"
+      (let [tag (create-tag :foo "bar")]
+        (is (= (clj-tag-name tag) "foo"))))
+
+    (testing "with hyphens"
+      (let [tag (create-tag :foo-bar "baz")]
+        (is (= (clj-tag-name tag) "foo-bar"))))
+
+    (testing "with underscores"
+      (let [tag (create-tag :foo_bar "baz")]
+        (is (= (clj-tag-name tag) "foo_bar"))))))
