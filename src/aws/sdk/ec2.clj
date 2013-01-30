@@ -181,20 +181,10 @@
 ;; tags
 ;;
 
-(defn- keywordify
-  "Generates a lower case keyword from an arbirtary string."
-  [s]
-  (keyword (string/replace (string/lower-case s) "_" "-")))
-
-(defn- tagify
-  "Generates a conventional AWS tag name from a keyword."
-  [k]
-  (string/replace (name k) "-" "_"))
-
 (defn create-tag
   "Create an AWS Tag object from a key/value pair."
   [k v]
-  ((mapper-> Tag) {:key (tagify k), :value v}))
+  ((mapper-> Tag) {:key (name k), :value v}))
 
 (extend-protocol Mappable
   TagDescription
@@ -261,7 +251,7 @@
 (extend-protocol Mappable
   Tag
   (to-map [tag]
-    {(keywordify (.getKey tag)) (.getValue tag)})
+    {(.getKey tag) (.getValue tag)})
 
   InstanceState
   (to-map [instance-state]
