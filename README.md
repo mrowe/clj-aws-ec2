@@ -18,7 +18,7 @@ machine images (AMIs), and to start and stop EBS-backed instances. See
 
 Add the following dependency to your `project.clj` file:
 
-    [clj-aws-ec2 "0.1.11"]
+    [clj-aws-ec2 "0.2.0"]
 
 ## Example
 
