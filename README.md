@@ -97,6 +97,10 @@ You can catch exceptions and extract details of the error condition:
 
 ## History
 
+### 0.2.0
+
+ * Bump version number to be more "semantic" (http://semver.org/)
+
 ### 0.1.11
 
  * Make the describe-tags API more consistent with other describe-* operations
