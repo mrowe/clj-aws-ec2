@@ -278,6 +278,7 @@
      :placement         (to-map (.getPlacement instance))
      :tags              (reduce merge (map to-map (.getTags instance)))
      :image             (.getImageId instance)
+     :public-dns        (.getPublicDnsName instance)
      :launch-time       (.getLaunchTime instance)})
 
   GroupIdentifier
