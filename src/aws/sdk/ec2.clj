@@ -11,6 +11,8 @@
            com.amazonaws.services.ec2.AmazonEC2Client
            com.amazonaws.AmazonServiceException
            com.amazonaws.services.ec2.model.BlockDeviceMapping
+           com.amazonaws.services.ec2.model.InstanceBlockDeviceMapping
+           com.amazonaws.services.ec2.model.EbsInstanceBlockDevice
            com.amazonaws.services.ec2.model.CreateImageRequest
            com.amazonaws.services.ec2.model.CreateTagsRequest
            com.amazonaws.services.ec2.model.DeleteTagsRequest
@@ -264,6 +266,19 @@
      :current-state  (to-map (.getCurrentState instance-state-change))
      :previous-state (to-map (.getPreviousState instance-state-change))})
 
+  EbsInstanceBlockDevice
+  (to-map [ebs-instance-block-device]
+    {:status      (.getStatus ebs-instance-block-device)  
+     :volume-id   (.getVolumeId ebs-instance-block-device) 
+     :attach-time (.getAttachTime ebs-instance-block-device)
+     })
+
+  InstanceBlockDeviceMapping 
+  (to-map [instance-block-device-mapping]
+    {:device-name (.getDeviceName instance-block-device-mapping) 
+     :ebs         (to-map (.getEbs instance-block-device-mapping))
+     })
+
   Placement
   (to-map [placement]
     {:availability-zone (.getAvailabilityZone placement)
@@ -272,14 +287,15 @@
 
   Instance
   (to-map [instance]
-    {:id                (.getInstanceId instance)
-     :state             (to-map (.getState instance))
-     :type              (.getInstanceType instance)
-     :placement         (to-map (.getPlacement instance))
-     :tags              (reduce merge (map to-map (.getTags instance)))
-     :image             (.getImageId instance)
-     :public-dns        (.getPublicDnsName instance)
-     :launch-time       (.getLaunchTime instance)})
+    {:id                    (.getInstanceId instance)
+     :state                 (to-map (.getState instance))
+     :type                  (.getInstanceType instance)
+     :placement             (to-map (.getPlacement instance))
+     :tags                  (reduce merge (map to-map (.getTags instance)))
+     :image                 (.getImageId instance)
+     :public-dns            (.getPublicDnsName instance)
+     :block-device-mappings (map to-map (.getBlockDeviceMappings instance))
+     :launch-time           (.getLaunchTime instance)})
 
   GroupIdentifier
   (to-map [group-identifier]
