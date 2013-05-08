@@ -9,7 +9,6 @@
   (:import com.amazonaws.AmazonServiceException
            com.amazonaws.auth.BasicAWSCredentials
            com.amazonaws.services.ec2.AmazonEC2Client
-           com.amazonaws.AmazonServiceException
            com.amazonaws.services.ec2.model.BlockDeviceMapping
            com.amazonaws.services.ec2.model.InstanceBlockDeviceMapping
            com.amazonaws.services.ec2.model.EbsInstanceBlockDevice
