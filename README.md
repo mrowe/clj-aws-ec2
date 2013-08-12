@@ -18,7 +18,7 @@ machine images (AMIs), and to start and stop EBS-backed instances. See
 
 Add the following dependency to your `project.clj` file:
 
-    [clj-aws-ec2 "0.2.1"]
+    [clj-aws-ec2 "0.3.0"]
 
 ## Example
 
@@ -100,6 +100,10 @@ You can catch exceptions and extract details of the error condition:
 * [API docs](http://mrowe.github.com/clj-aws-ec2/)
 
 ## History
+
+### 0.3.0
+
+ * instance-filter and image-filter can now accept multiple filter specs
 
 ### 0.2.1
 
