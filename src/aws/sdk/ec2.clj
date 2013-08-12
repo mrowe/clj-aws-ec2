@@ -130,13 +130,13 @@
 
   E.g. (ec2/aws-filter \"tag:Name\" \"my-instance\")"
   [name & values]
-  [(Filter. name values)])
+  (Filter. name values))
 
 (defn instance-filter
   "Returns a filter that can be used with ec2/describe-instances. It
   should be passed a Filter created by ec2/aws-filter."
-  [filter]
-  (.withFilters (DescribeInstancesRequest.) filter))
+  [& filters]
+  (.withFilters (DescribeInstancesRequest.) filters))
 
 (defn instance-id-filter
   "Returns an instance filter that can be passed to ec2/describe-instances to describe a single instance."
@@ -146,8 +146,8 @@
 (defn image-filter
   "Returns a filter that can be used with ec2/describe-images. It
   should be passed a Filter created by ec2/aws-filter."
-  [filter]
-  (.withFilters (DescribeImagesRequest.) filter))
+  [& filters]
+  (.withFilters (DescribeImagesRequest.) filters))
 
 (defn image-id-filter
   "Returns an image filter that can be passed to ec2/describe-images to describe a single image."
@@ -164,8 +164,8 @@
 (defn tag-filter
   "Returns a filter that can be passed to ec2/describe-tags to limit the results returned. It
   should be passed a Filter created by ec2/aws-filter."
-  [filter]
-     (DescribeTagsRequest. filter))
+  [& filters]
+     (DescribeTagsRequest. filters))
 
 (defn tag-filter-by-resource-id
   "Returns a filter that can be passed to ec2/describe-tags to get all tags for a resource."

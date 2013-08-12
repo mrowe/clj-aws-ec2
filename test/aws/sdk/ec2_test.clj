@@ -8,19 +8,14 @@
 
 (let [filter (aws-filter "foo" "bar")]
 
-  (deftest filter-is-a-vector
-    (testing "AWS filter provides a vector"
-      (is (vector? filter))))
-
   (deftest filter-sets-name-and-one-value
     (testing "AWS filter"
-      (let [f (first filter)]
-        (is (= (.getName f) "foo"))
-        (is (= (.getValues f) '("bar"))))))
+      (is (= (.getName filter) "foo"))
+      (is (= (.getValues filter) '("bar")))))
 
   (deftest filter-sets-two-values
     (testing "AWS filter"
-      (let [filter (first (aws-filter "foo" "bar" "baz"))]
+      (let [filter (aws-filter "foo" "bar" "baz")]
         (is (= (.getValues filter) '("bar" "baz")))))))
 
 
