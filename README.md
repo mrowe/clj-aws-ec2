@@ -29,9 +29,13 @@ Add the following dependency to your `project.clj` file:
 
 (ec2/describe-instances cred)
 (ec2/describe-instances cred (ec2/instance-id-filter "i-deadcafe"))
+(ec2/describe-instances cred (ec2/instance-filter (ec2/aws-filter "instance-state-name" "running")
+                                                  (ec2/aws-filter "tag-key" "role")))
 
 (ec2/describe-images cred (ec2/image-owner-filter "self"))
 (ec2/describe-images cred (ec2/image-id-filter "ami-3c47a355"))
+(ec2/describe-images cred (ec2/image-filter (ec2/aws-filter "tag-key" "latest")
+                                            (ec2/aws-filter "tag-key" "webserver")))
 
 (ec2/start-instances cred "i-beefcafe")
 (ec2/stop-instances cred "i-beefcafe" "i-deadbabe")
