@@ -19,6 +19,7 @@
            com.amazonaws.services.ec2.model.DescribeImagesRequest 
            com.amazonaws.services.ec2.model.DescribeInstancesRequest
            com.amazonaws.services.ec2.model.DescribeTagsRequest
+           com.amazonaws.services.ec2.model.DescribeVolumesRequest
            com.amazonaws.services.ec2.model.EbsBlockDevice
            com.amazonaws.services.ec2.model.Filter
            com.amazonaws.services.ec2.model.GroupIdentifier
@@ -38,7 +39,9 @@
            com.amazonaws.services.ec2.model.StopInstancesRequest
            com.amazonaws.services.ec2.model.TerminateInstancesRequest
            com.amazonaws.services.ec2.model.Tag
-           com.amazonaws.services.ec2.model.TagDescription)
+           com.amazonaws.services.ec2.model.TagDescription
+           com.amazonaws.services.ec2.model.Volume
+           com.amazonaws.services.ec2.model.VolumeAttachment)
 
   (:require [clojure.string :as string]))
 
@@ -160,6 +163,27 @@
   user)."
   [owner]
   (.withOwners (DescribeImagesRequest.) [owner]))
+
+(defn volume-filter
+  "Returns a filter that can be used with ec2/describe-volumes. It
+  should be passed a Filter created by ec2/aws-filter."
+  [& filters]
+  (.withFilters (DescribeVolumesRequest.) filters))
+
+(defn volume-id-filter
+  "Returns a volume filter that can be passed to ec2/describe-volumes to describe a single volume."
+  [id]
+  (volume-filter (aws-filter "volume-id" (str id))))
+
+(defn volume-snapshot-filter
+  "Returns a volume filter that can be passed to ec2/describe-volumes to describe volumes created from the specified snapshot."
+  [snapshot-id]
+  (volume-filter (aws-filter "snapshot-id" (str snapshot-id))))
+
+(defn volume-status-filter
+  "Returns a volume filter that can be passed to ec2/describe-volumes to describe volumes with the specified status (e.g. :in-use)."
+  [status]
+  (volume-filter (aws-filter "status" (name status))))
 
 (defn tag-filter
   "Returns a filter that can be passed to ec2/describe-tags to limit the results returned. It
@@ -500,3 +524,48 @@
   (ec2/deregister-image cred \"ami-9465dbfd\")"
   [cred image-id]
   (.deregisterImage (ec2-client cred) (DeregisterImageRequest. image-id)))
+
+
+;;
+;; volumes
+;;
+
+(extend-protocol Mappable
+  Volume
+  (to-map [volume]
+    {:volume-id         (.getVolumeId volume)
+     :volume-type       (.getVolumeType volume)
+     :availability-zone (.getAvailabilityZone volume)
+     :create-time       (.getCreateTime volume)
+     :iops              (.getIops volume)
+     :size              (.getSize volume)
+     :snapshot-id       (.getSnapshotId volume)
+     :state             (.getState volume)
+     :tags              (reduce merge (map to-map (.getTags volume)))
+     :attachments       (map to-map (.getAttachments volume))})
+
+  VolumeAttachment
+  (to-map [volume-attachment]
+    {:volume-id             (.getVolumeId volume-attachment)
+     :instance-id           (.getInstanceId volume-attachment)
+     :device                (.getDevice volume-attachment)
+     :state                 (.getState volume-attachment)
+     :attach-time           (.getAttachTime volume-attachment)
+     :delete-on-termination (.getDeleteOnTermination volume-attachment)}))
+
+(defn describe-volumes
+  "List EBS volumes, applying the optional filter if supplied.
+
+  You can specify filters to limit the number of volumes returned to
+  find a specific AMI by id, or with a given status. E.g.:
+
+      (ec2/describe-volumes cred (ec2/volume-id-filter \"vol-98765432\"))
+      (ec2/describe-volumes cred (ec2/volume-snapshot-filter \"snap-abcd1234\"))
+      (ec2/describe-volumes cred (ec2/volume-status-filter :available)))
+  See
+  http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-DescribeVolumes.html#cmd-DescribeVolumes-filters
+  for a description of available filters."
+  ([cred]
+     (map to-map (.getVolumes (.describeVolumes (ec2-client cred)))))
+  ([cred filter]
+     (map to-map (.getVolumes (.describeVolumes (ec2-client cred) filter)))))
