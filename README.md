@@ -18,7 +18,7 @@ machine images (AMIs), and to start and stop EBS-backed instances. See
 
 Add the following dependency to your `project.clj` file:
 
-    [clj-aws-ec2 "0.3.0"]
+    [clj-aws-ec2 "0.4.0"]
 
 ## Example
 
@@ -57,6 +57,12 @@ Add the following dependency to your `project.clj` file:
 (ec2/describe-tags cred (ec2/tag-filter-by-resource-type "image"))
 (ec2/create-tags cred ["id-deadcafe", "ami-9465dbfd"] {:name "web server" :owner "ops"})
 (ec2/delete-tags cred ["id-deadcafe"] {:owner nil})
+
+
+(ec2/describe-volumes cred)
+(ec2/describe-volumes cred (ec2/volume-id-filter "vol-98765432"))
+(ec2/describe-volumes cred (ec2/volume-snapshot-filter "snap-abcd1234"))
+(ec2/describe-volumes cred (ec2/volume-status-filter :available)))
 ```
 
 Refer to the
@@ -100,6 +106,10 @@ You can catch exceptions and extract details of the error condition:
 * [API docs](http://mrowe.github.com/clj-aws-ec2/)
 
 ## History
+
+### 0.4.0
+
+ * introduce describe-volumes
 
 ### 0.3.0
 
