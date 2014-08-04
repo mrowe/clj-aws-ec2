@@ -16,7 +16,7 @@
            com.amazonaws.services.ec2.model.CreateTagsRequest
            com.amazonaws.services.ec2.model.DeleteTagsRequest
            com.amazonaws.services.ec2.model.DeregisterImageRequest
-           com.amazonaws.services.ec2.model.DescribeImagesRequest 
+           com.amazonaws.services.ec2.model.DescribeImagesRequest
            com.amazonaws.services.ec2.model.DescribeInstancesRequest
            com.amazonaws.services.ec2.model.DescribeTagsRequest
            com.amazonaws.services.ec2.model.DescribeVolumesRequest
@@ -291,14 +291,14 @@
 
   EbsInstanceBlockDevice
   (to-map [ebs-instance-block-device]
-    {:status      (.getStatus ebs-instance-block-device)  
-     :volume-id   (.getVolumeId ebs-instance-block-device) 
+    {:status      (.getStatus ebs-instance-block-device)
+     :volume-id   (.getVolumeId ebs-instance-block-device)
      :attach-time (.getAttachTime ebs-instance-block-device)
      })
 
-  InstanceBlockDeviceMapping 
+  InstanceBlockDeviceMapping
   (to-map [instance-block-device-mapping]
-    {:device-name (.getDeviceName instance-block-device-mapping) 
+    {:device-name (.getDeviceName instance-block-device-mapping)
      :ebs         (to-map (.getEbs instance-block-device-mapping))
      })
 
@@ -317,6 +317,7 @@
      :tags                  (reduce merge (map to-map (.getTags instance)))
      :image                 (.getImageId instance)
      :public-dns            (.getPublicDnsName instance)
+     :private-ip-address    (.getPrivateIpAddress instance)
      :block-device-mappings (map to-map (.getBlockDeviceMappings instance))
      :launch-time           (.getLaunchTime instance)})
 
