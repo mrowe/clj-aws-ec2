@@ -7,6 +7,7 @@
   specify an API endpoint (i.e. region) other than us-east."
 
   (:import com.amazonaws.AmazonServiceException
+           com.amazonaws.auth.DefaultAWSCredentialsProviderChain
            com.amazonaws.auth.BasicAWSCredentials
            com.amazonaws.services.ec2.AmazonEC2Client
            com.amazonaws.services.ec2.model.BlockDeviceMapping
@@ -48,12 +49,12 @@
 
 (defn- ec2-client*
   "Create an AmazonEC2Client instance from a map of credentials."
-  [cred]
-  (let [client (AmazonEC2Client.
-                (BasicAWSCredentials.
-                 (:access-key cred)
-                 (:secret-key cred)))]
-    (if (:endpoint cred) (.setEndpoint client (:endpoint cred)))
+  [{:keys [access-key secret-key endpoint]}]
+  (let [credentials (if (and access-key secret-key)
+                      (BasicAWSCredentials. access-key secret-key)
+                      (DefaultAWSCredentialsProviderChain.))
+        client (AmazonEC2Client. credentials)]
+    (if endpoint (.setEndpoint client endpoint))
     client))
 
 (def ^{:private true}
