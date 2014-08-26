@@ -7,6 +7,7 @@
   specify an API endpoint (i.e. region) other than us-east."
 
   (:import com.amazonaws.AmazonServiceException
+           com.amazonaws.auth.DefaultAWSCredentialsProviderChain
            com.amazonaws.auth.BasicAWSCredentials
            com.amazonaws.services.ec2.AmazonEC2Client
            com.amazonaws.services.ec2.model.BlockDeviceMapping
@@ -26,7 +27,6 @@
            com.amazonaws.services.ec2.model.IamInstanceProfileSpecification
            com.amazonaws.services.ec2.model.Image
            com.amazonaws.services.ec2.model.Instance
-           com.amazonaws.services.ec2.model.InstanceLicenseSpecification
            com.amazonaws.services.ec2.model.InstanceNetworkInterfaceSpecification
            com.amazonaws.services.ec2.model.InstanceState
            com.amazonaws.services.ec2.model.InstanceStateChange
@@ -48,12 +48,12 @@
 
 (defn- ec2-client*
   "Create an AmazonEC2Client instance from a map of credentials."
-  [cred]
-  (let [client (AmazonEC2Client.
-                (BasicAWSCredentials.
-                 (:access-key cred)
-                 (:secret-key cred)))]
-    (if (:endpoint cred) (.setEndpoint client (:endpoint cred)))
+  [{:keys [access-key secret-key endpoint]}]
+  (let [credentials (if (and access-key secret-key)
+                      (BasicAWSCredentials. access-key secret-key)
+                      (DefaultAWSCredentialsProviderChain.))
+        client (AmazonEC2Client. credentials)]
+    (if endpoint (.setEndpoint client endpoint))
     client))
 
 (def ^{:private true}
@@ -381,7 +381,6 @@
   (let [mappers
         {
          :iam-instance-profile  (fn [iam-instance-profile]  ((mapper-> IamInstanceProfileSpecification) iam-instance-profile))
-         :license               (fn [license]               ((mapper-> InstanceLicenseSpecification) license))
          :placement             (fn [placement]             ((mapper-> Placement) placement))
          :ebs                   (fn [ebs]                   ((mapper-> EbsBlockDevice) ebs))
          ;; the following attributes contain vectors of maps
