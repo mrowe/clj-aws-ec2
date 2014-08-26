@@ -16,9 +16,11 @@ machine images (AMIs), and to start and stop EBS-backed instances. See
 
 ## Install
 
+[![Clojars Project](http://clojars.org/clj-aws-ec2/latest-version.svg)](http://clojars.org/clj-aws-ec2)
+
 Add the following dependency to your `project.clj` file:
 
-[![Clojars Project](http://clojars.org/clj-aws-ec2/latest-version.svg)](http://clojars.org/clj-aws-ec2)
+    [clj-aws-ec2 "0.5.0"]
 
 ## Example
 
