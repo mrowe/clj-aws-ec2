@@ -27,7 +27,6 @@
            com.amazonaws.services.ec2.model.IamInstanceProfileSpecification
            com.amazonaws.services.ec2.model.Image
            com.amazonaws.services.ec2.model.Instance
-           com.amazonaws.services.ec2.model.InstanceLicenseSpecification
            com.amazonaws.services.ec2.model.InstanceNetworkInterfaceSpecification
            com.amazonaws.services.ec2.model.InstanceState
            com.amazonaws.services.ec2.model.InstanceStateChange
@@ -382,7 +381,6 @@
   (let [mappers
         {
          :iam-instance-profile  (fn [iam-instance-profile]  ((mapper-> IamInstanceProfileSpecification) iam-instance-profile))
-         :license               (fn [license]               ((mapper-> InstanceLicenseSpecification) license))
          :placement             (fn [placement]             ((mapper-> Placement) placement))
          :ebs                   (fn [ebs]                   ((mapper-> EbsBlockDevice) ebs))
          ;; the following attributes contain vectors of maps
