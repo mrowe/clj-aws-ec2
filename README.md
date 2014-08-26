@@ -18,7 +18,7 @@ machine images (AMIs), and to start and stop EBS-backed instances. See
 
 Add the following dependency to your `project.clj` file:
 
-    [clj-aws-ec2 "0.4.0"]
+    [clj-aws-ec2 "0.5.0"]
 
 ## Example
 
@@ -106,6 +106,12 @@ You can catch exceptions and extract details of the error condition:
 * [API docs](http://mrowe.github.com/clj-aws-ec2/)
 
 ## History
+
+### 0.5.0
+
+ * instance-block-device now has private-ip-address (thanks @jonpither)
+ * use default credential provider chain if available (thanks @christianblunden)
+ * upgrade AWS SDK to 1.8.9.1 (thanks @christianblunden)
 
 ### 0.4.0
 
