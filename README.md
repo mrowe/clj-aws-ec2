@@ -1,7 +1,5 @@
 [![Build Status](https://buildhive.cloudbees.com/job/mrowe/job/clj-aws-ec2/badge/icon)](https://buildhive.cloudbees.com/job/mrowe/job/clj-aws-ec2/)
 
-[![Clojars Project](http://clojars.org/clj-aws-ec2/latest-version.svg)](http://clojars.org/clj-aws-ec2)
-
 # clj-aws-ec2
 
 A Clojure library for accessing Amazon EC2, based on the official AWS
@@ -20,7 +18,7 @@ machine images (AMIs), and to start and stop EBS-backed instances. See
 
 Add the following dependency to your `project.clj` file:
 
-    [clj-aws-ec2 "0.5.0"]
+    [![Clojars Project](http://clojars.org/clj-aws-ec2/latest-version.svg)](http://clojars.org/clj-aws-ec2)
 
 ## Example
 
